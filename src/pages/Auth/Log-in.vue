@@ -1,4 +1,16 @@
 <template>
+  <q-banner
+    v-if="error"
+    class="bg-negative text-red flex justify-between q-ma-sm border-red-9"
+    style="border: 1px solid red"
+  >
+    <q-icon name="error" class="cursor-pointer text-red-8" size="1.5rem" />
+    {{
+      error ||
+      "Something went wrong, please try again or reach out to customer support"
+    }}
+    <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
+  </q-banner>
   <div class="body">
     <div class="full-width">
       <div class="head">
@@ -21,10 +33,11 @@
             Email / Mobile number
           </h6>
           <q-input
-            v-model="email"
+            v-model="info"
             outlined
             stack-label
-            type="email"
+            required
+            :type="inputType"
             placeholder="Please enter"
           />
         </div>
@@ -33,13 +46,32 @@
           <q-input
             v-model="password"
             outlined
+            lazy-rules
+            :type="isPwd ? 'password' : 'text'"
+            :rules="[
+              (val) => (val && val.length > 0) || 'field cannot be blank',
+            ]"
             stack-label
             placeholder="Please enter"
-          />
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              /> </template
+          ></q-input>
           <h6 class="text-subtitle2 no-padding q-mt-lg">Forgot password?</h6>
         </div>
 
-        <q-btn unelevated no-caps color="primary" size="16px">Log in </q-btn>
+        <q-btn
+          unelevated
+          no-caps
+          color="primary"
+          size="16px"
+          @click="HandleLogin"
+          >Log in
+        </q-btn>
       </q-form>
     </div>
     <div>
@@ -53,7 +85,58 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, computed } from "vue";
+import { Loading } from "quasar";
+import { useRouter } from "vue-router";
+
+const isLoggedIn = ref(false);
+const email = ref("");
+const phone_number = ref("");
+const password = ref("");
+const error = ref(null);
+const router = useRouter();
+const isPwd = ref("password");
+const info = ref("");
+const inputType = computed(() => (email.value ? "email" : "tel"));
+
+const HandleLogin = async () => {
+  Loading.show();
+  try {
+    const response = await fetch("/src/assets/Data.json");
+    const data = await response.json();
+
+    const trimmedInput = info.value.trim();
+    const trimmedPassword = password.value;
+
+    // User lookup logic
+    const user = data.find(
+      (u) =>
+        (u.email === trimmedInput ||
+          u.phone_number.toString() === trimmedInput) &&
+        u.password === trimmedPassword
+    );
+
+    if (user) {
+      console.log("Log in success");
+      router.push("/home");
+    } else {
+      error.value = "Invalid email / phone number or password";
+      console.log(error.value);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    error.value =
+      "Something went wrong, please try again or reach out to customer support";
+  } finally {
+    Loading.hide();
+  }
+};
+const dismissError = () => {
+  error.value = null;
+  Loading.hide();
+};
+</script>
 
 <style lang="scss" scoped>
 h2 {
@@ -70,6 +153,12 @@ h2 {
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+:deep(.q-banner__content) {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 </style>

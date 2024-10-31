@@ -34,7 +34,9 @@ module.exports = configure(function (/* ctx */) {
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
       // optional, you are not bound to it
-      "material-icons", // optional, you are not bound to it
+      "material-icons",
+      "material-icons-outlined",
+      // optional, you are not bound to it
     ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
@@ -84,7 +86,14 @@ module.exports = configure(function (/* ctx */) {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
-      config: {},
+      config: {
+        message: "Please wait...",
+        spinnerSize: 100,
+        spinnerColor: "primary",
+        messageColor: "primary",
+        backgroundColor: "grey-8",
+        customClass: "my-loading-class",
+      },
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
@@ -97,7 +106,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ["Loading"],
     },
 
     // animations: 'all', // --- includes all animations

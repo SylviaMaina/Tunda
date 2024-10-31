@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">tunda</string>
+    <string name="title_activity_main">tunda</string>
+    <string name="package_name">com.tunda.app</string>
+    <string name="custom_url_scheme">com.tunda.app</string>
+</resources>
