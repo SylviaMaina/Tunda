@@ -78,7 +78,9 @@
       <h6 class="text-subtitle2 flex flex-center">
         Don't have an account?<span
           class="q-ml-sm text-weight-bold text-subtitle2"
-          >Create account</span
+          ><router-link to="signup" style="text-decoration: none"
+            >Create account</router-link
+          ></span
         >
       </h6>
     </div>
