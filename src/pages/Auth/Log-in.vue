@@ -106,6 +106,7 @@ import { Loading } from "quasar";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import AuthSession from "../../../Storage/AuthSession";
+import { useUserStore } from "src/stores/useUserStore";
 
 const email = ref("");
 const password = ref("");
@@ -153,9 +154,13 @@ const HandleLogin = async () => {
       Loading.hide();
       AuthSession.saveSession(res.data);
       console.log("Log in success");
-      router.push("/bio");
     } else {
       error.value = res.data.message || "Error registering";
+    }
+    if (userData.user.interests.length > 0) {
+      router.push("/home");
+    } else {
+      router.push("bio");
     }
   } catch (err) {
     error.value =
@@ -170,7 +175,12 @@ const dismissError = () => {
   Loading.hide();
 };
 
-onMounted(getLocation);
+const userData = useUserStore();
+
+onMounted(async () => {
+  getLocation();
+  await userData.fetchUserData();
+});
 </script>
 
 <style lang="scss" scoped>
