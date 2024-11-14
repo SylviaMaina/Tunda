@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import TopNav from "../components/Top-Nav.vue";
+import TopNav from "../components/Top-nav.vue";
 import Footernav from "../components/Footer-nav.vue";
 </script>
 

@@ -75,7 +75,7 @@
             type="submit"
             color="primary"
             no-caps
-            style="width: 99%; margin: 0 auto"
+            style="width: 99%; margin: 0 auto; height: 2.5rem"
           />
         </router-link>
       </div>

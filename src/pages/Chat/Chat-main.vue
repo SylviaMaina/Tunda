@@ -44,7 +44,7 @@
     </q-input>
   </div>
   <q-list>
-    <router-link to="message" style="text-decoration: none; color: #000">
+    <router-link to="/message" style="text-decoration: none; color: #000">
       <q-item
         v-for="contact in offline"
         :key="contact.id"
@@ -98,4 +98,11 @@ const setup = () => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.q-field__control) {
+  padding: 0;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+</style>

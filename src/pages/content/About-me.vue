@@ -1,17 +1,19 @@
 <template style="width: screen; height: 100vh">
-  <div class="" style="width: 95%; margin: 0 auto">
+  <div class="q-ma-sm" style="width: 95%; margin: 0 auto">
     <div
       style="
         width: 100%;
-        height: 5rem;
+        height: 8rem;
         display: flex;
-        align-items: center;
         justify-content: space-evenly;
       "
+      v-if="user"
     >
       <div style="width: 100%; height: 5rem; margin-left: 0.5rem">
         <div class="row flex-center justify-between">
-          <h6 class="text-black q-ma-sm text-weight-bold">Jane Kimani, 24</h6>
+          <h6 class="text-black q-ma-sm text-weight-bold">
+            {{ user?.full_name }}, {{ calculateAge(user.dob) }}
+          </h6>
           <router-link to="/home" style="text-decoration: none">
             <div
               style="
@@ -30,74 +32,53 @@
         </div>
 
         <div
-          class="flex flex-center justify-between q-mt-sm"
-          style="width: 70%"
+          class="q-gutter-sm q-mb-sm"
+          style="
+            width: 90%;
+            display: grid;
+            grid-template-columns: repeat(3, 6.8rem);
+          "
         >
-          <q-badge transparent color="grey" class="q-pa-sm" label="Cycling" />
-          <q-badge transparent color="grey" class="q-pa-sm" label="Hiking" />
-          <q-badge
-            transparent
-            color="grey"
-            class="q-pa-sm"
-            label="Sky diving"
-          />
+          <div v-for="category in user.interests" :key="category.name">
+            <div
+              v-for="interest in category.interests.slice(0, 1)"
+              :key="interest.label"
+            >
+              <q-badge
+                transparent
+                color="dark"
+                class="q-pa-sm ellipsis-2-lines"
+                :label="interest.label"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="q-my-lg">
       <h6 class="q-ma-sm text-dark text-subtitle1">Bio</h6>
       <h6 class="q-ma-sm text-subtitle2">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi voluptates
-        illo excepturi eligendi doloribus voluptatem odio explicabo, rerum non
-        totam quae molestias numquam deleniti inventore ad unde sint ullam
-        architecto quidem. Corrupti perspiciatis, veritatis ipsa commodi modi
-        accusantium et vitae similique quia voluptas sunt voluptates consectetur
-        in ipsam dolores minus, suscipit repellat nesciunt illo?
+        {{ user?.bio }}
       </h6>
-      <div>
-        <h6 class="text-weight-bold text-subtitle1 q-py-sm">Category 1</h6>
-        <div class="q-gutter-lg">
-          <q-btn-toggle
-            v-model="model"
-            no-caps
-            flat
-            style="border: 1px solid gray"
-            toggle-color="primary"
-            :options="[{ label: 'Three', value: 'three' }]"
+    </div>
+    <div
+      style="width: 90%; height: 78vh; margin: 0 auto"
+      class="q-pa-sm overflow-auto"
+      v-if="user"
+    >
+      <div
+        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem"
+      >
+        <q-card
+          v-for="(match, index) in user.photos"
+          :key="index"
+          class="my-card"
+        >
+          <img
+            :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${match?.saved_file_name}`"
+            alt=".."
           />
-          <q-btn-toggle
-            v-model="model"
-            no-caps
-            flat
-            style="border: 1px solid gray"
-            toggle-color="primary"
-            :options="[{ label: 'Fourteen', value: 'three' }]"
-          />
-          <q-btn-toggle
-            v-model="model"
-            no-caps
-            flat
-            style="border: 1px solid gray"
-            toggle-color="primary"
-            :options="[{ label: 'Three', value: 'three' }]"
-          />
-          <q-btn-toggle
-            v-model="model"
-            no-caps
-            flat
-            style="border: 1px solid gray"
-            toggle-color="primary"
-            :options="[{ label: 'Three', value: 'three' }]"
-          />
-          <q-btn-toggle
-            v-model="model"
-            no-caps
-            flat
-            style="border: 1px solid gray"
-            toggle-color="primary"
-            :options="[{ label: 'Three', value: 'three' }]"
-          />
-        </div>
+        </q-card>
       </div>
     </div>
     <div
@@ -134,7 +115,10 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
+import { apiClient } from "app/Storage/api";
 
 const $q = useQuasar();
 
@@ -148,6 +132,7 @@ const showNotif = () => {
     timeout: 1000,
   });
 };
+
 const showLike = () => {
   $q.notify({
     icon: "favorite",
@@ -159,6 +144,36 @@ const showLike = () => {
     classes: "pulsate-icon",
   });
 };
+
+const route = useRoute();
+const user = ref(null);
+const userId = route.path.split("/").pop();
+
+// Function to fetch matches
+const getMatch = async () => {
+  try {
+    const response = await apiClient.get(`matches/profile/?user_id=${userId}`);
+
+    const users = response.data.results;
+
+    console.log(users);
+
+    user.value = users;
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+  }
+};
+
+// Fetch user data on mount
+onMounted(async () => {
+  await getMatch();
+});
+function calculateAge(dob) {
+  const birthDate = new Date(dob);
+  const ageDifMs = Date.now() - birthDate.getTime();
+  const ageDate = new Date(ageDifMs);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
 </script>
 
 <style lang="scss" scoped></style>

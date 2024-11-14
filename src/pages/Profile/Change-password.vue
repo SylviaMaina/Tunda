@@ -9,7 +9,7 @@
     "
   >
     <router-link to="/profile">
-      <q-icon color="dark" name="chevron_left" size="20px"
+      <q-icon color="dark" name="chevron_left" size="24px"
     /></router-link>
 
     <div style="width: 90%; margin: 0 auto">

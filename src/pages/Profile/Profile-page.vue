@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 90vh; width: 100vw" class="overflow-auto">
+  <div style="height: 90vh; width: 100vw" v-if="userData.user">
     <div
       style="
         width: 90%;
@@ -27,7 +27,10 @@
             align-items: start;
           "
         >
-          <h6 class="no-margin no-padding text-weight-bold text-subtitle1">
+          <h6
+            class="no-margin no-padding text-subtitle1"
+            style="font-weight: 600"
+          >
             My Profile
           </h6>
         </div>
@@ -62,7 +65,7 @@
           style="bottom: 0.2rem; right: 0.6rem; border-radius: 100%"
         />
       </q-img>
-      <h6>Mark Kimani</h6>
+      <h6>{{ userData.user.full_name }}</h6>
       <div
         style="
           display: flex;
@@ -75,7 +78,7 @@
           class="text-subtitle2 text-grey q-my-sm"
           style="border-right: 1px solid #bababa; padding-right: 0.3rem"
         >
-          24 years old
+          {{ calculateAge(userData.user.dob) }} years old
         </h6>
         <div style="display: flex; align-items: center">
           <q-icon name="location_on" color="grey-5" />
@@ -84,8 +87,13 @@
       </div>
     </div>
     <router-link to="/premium" style="text-decoration: none; color: black">
-      <q-item class="q-mx-md q-my-sm bg-white" clickable v-ripple>
-        <q-item-section avatar>
+      <q-item
+        style="width: 90%; border-radius: 0.5rem; margin: 0 auto"
+        class="q-mx-lg q-my-sm bg-white q-gutter-sm"
+        clickable
+        v-ripple
+      >
+        <q-item-section avatar style="width: 2rem">
           <q-icon size="32px" name="diamond" color="red" />
         </q-item-section>
 
@@ -110,13 +118,21 @@
     ></router-link>
 
     <div
-      style="width: 90%; border-radius: 0.5rem"
-      class="q-mx-lg q-my-sm bg-white q-gutter-sm"
+      style="
+        width: 90%;
+        border-radius: 0.5rem;
+        margin: auto;
+        overflow: auto;
+        height: 48vh;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+      "
+      class="q-mx-lg q-my-lg bg-white q-gutter-sm"
     >
       <q-list padding>
         <router-link to="/personal" style="text-decoration: none; color: black">
           <q-item>
-            <q-item-section avatar>
+            <q-item-section avatar style="width: 2rem">
               <q-icon size="20px" name="o_person" />
             </q-item-section>
 
@@ -140,7 +156,7 @@
           style="text-decoration: none; color: black"
         >
           <q-item>
-            <q-item-section avatar>
+            <q-item-section avatar style="width: 2rem">
               <q-icon size="20px" name="o_visibility" />
             </q-item-section>
 
@@ -165,7 +181,7 @@
           style="text-decoration: none; color: black"
         >
           <q-item>
-            <q-item-section avatar>
+            <q-item-section avatar style="width: 2rem">
               <q-icon size="20px" name="o_notifications" />
             </q-item-section>
 
@@ -186,7 +202,7 @@
         ></router-link>
         <router-link to="/terms" style="text-decoration: none; color: black">
           <q-item>
-            <q-item-section avatar>
+            <q-item-section avatar style="width: 2rem">
               <q-icon size="20px" name="o_language" />
             </q-item-section>
 
@@ -208,7 +224,7 @@
         </router-link>
         <router-link to="privacy" style="text-decoration: none; color: black">
           <q-item>
-            <q-item-section avatar>
+            <q-item-section avatar style="width: 2rem">
               <q-icon size="20px" name="o_description" />
             </q-item-section>
 
@@ -230,7 +246,7 @@
         </router-link>
         <router-link to="/aboutus" style="text-decoration: none; color: black">
           <q-item>
-            <q-item-section avatar>
+            <q-item-section avatar style="width: 2rem">
               <q-icon size="20px" name="o_visibility" />
             </q-item-section>
 
@@ -252,7 +268,7 @@
         </router-link>
         <router-link to="/contact" style="text-decoration: none; color: black">
           <q-item>
-            <q-item-section avatar>
+            <q-item-section avatar style="width: 2rem">
               <q-icon size="20px" name="o_help" />
             </q-item-section>
 
@@ -273,11 +289,11 @@
           </q-item>
         </router-link>
         <q-item>
-          <q-item-section avatar>
+          <q-item-section avatar style="width: 2rem">
             <q-icon size="20px" name="o_logout" />
           </q-item-section>
 
-          <q-item-section>
+          <q-item-section @click="Logout">
             <q-item-label>Logout</q-item-label>
           </q-item-section>
 
@@ -297,6 +313,31 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import AuthSession from "app/Storage/AuthSession";
+import { useUserStore } from "src/stores/useUserStore";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const userData = useUserStore();
+
+onMounted(() => {
+  userData.fetchUserData();
+});
+
+function calculateAge(dob) {
+  const birthDate = new Date(dob);
+  const ageDifMs = Date.now() - birthDate.getTime();
+  const ageDate = new Date(ageDifMs);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+const Logout = () => {
+  AuthSession.logOut();
+  router.push("/login");
+};
+</script>
 
 <style lang="scss" scoped></style>

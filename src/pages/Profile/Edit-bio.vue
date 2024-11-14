@@ -27,40 +27,39 @@
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
   </q-banner>
-  <div class="body">
-    <div v-if="userData?.user">
-      <div class="q-py-md">
-        <h6 class="text-weight-bold text-h5 q-py-sm">Edit profession</h6>
-      </div>
-      <div class="q-gutter-lg">
-        <q-select
-          outlined
-          clearable
-          v-model="model"
-          :options="options"
-          :label="userData.user.profession"
-        />
-      </div>
+  <div
+    style="
+      width: 90%;
+      margin: 0 auto;
+      height: 5rem;
+      display: flex;
+      align-items: center;
+    "
+  >
+    <router-link to="/profile">
+      <q-icon color="dark" name="chevron_left" size="24px"
+    /></router-link>
+
+    <div style="width: 90%; margin: 0 auto">
+      <h6 class="no-margin no-padding text-weight-medium text-h6 text-center">
+        Edit bio
+      </h6>
     </div>
-    <div style="display: flex; justify-content: space-between; width: 94%">
-      <q-btn
-        label="Discard changes"
-        type="submit"
-        size="0.9rem"
-        no-caps
-        flat
-        class="q-mr-sm"
-        style="width: 9.6rem; height: 2.5rem; border: 1px solid grey"
-      />
-      <q-btn
-        label="Update details"
-        type="submit"
-        color="primary"
-        @click="Profession"
-        size="0.9rem"
-        no-caps
-        style="width: 9.6rem; height: 2.5rem"
-      />
+  </div>
+  <div class="body" v-if="userData.user">
+    <div>
+      <q-form class="q-gutter-lg">
+        <q-input
+          v-model="model"
+          outlined
+          type="text"
+          :placeholder="userData.user.bio"
+        >
+          <template v-slot:append>
+            <q-icon name="o_send" class="cursor-pointer" @click="EditBio" />
+          </template>
+        </q-input>
+      </q-form>
     </div>
   </div>
 </template>
@@ -71,47 +70,18 @@ import { Loading } from "quasar";
 import { useUserStore } from "src/stores/useUserStore";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-
 const router = useRouter();
-const model = ref(null);
-const options = [
-  "Engineer",
-  "Lawyer",
-  "Accoutant",
-  "Architect",
-  "Electrician",
-  "Chef",
-  "Software Developer",
-  "Dentist",
-  "Butcher",
-  "Physician",
-  "Economist",
-  "Dietitians and nutritionists",
-  "Bartender",
-  "Designer",
-  "Artist",
-  "SEcretary",
-  "Pharmacist",
-  "Florist",
-  "Model",
-  "Student",
-  "Optician",
-  "Police oficer",
-  "Scientist",
-  "Teacher",
-];
+
 const userData = useUserStore();
+const model = ref("");
+
 const error = ref(null);
 
-onMounted(() => {
-  userData.fetchUserData();
-});
-
-const Profession = async () => {
+const EditBio = async () => {
   Loading.show();
   try {
     const res = await apiClient.patch("/profile/update/", {
-      profession: model.value,
+      bio: model.value,
     });
     if (res.data.success) {
       Loading.hide();
@@ -131,11 +101,17 @@ const dismissError = () => {
   error.value = null;
   Loading.hide();
 };
+
+onMounted(() => {
+  userData.fetchUserData();
+});
+
+console.log(userData.user);
 </script>
 
 <style lang="scss" scoped>
 .body {
-  height: 80vh;
+  height: 88vh;
   width: 90vw;
   margin: 0 auto;
   padding: 0.2rem;

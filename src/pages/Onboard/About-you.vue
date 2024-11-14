@@ -29,49 +29,20 @@
   </q-banner>
   <div class="body">
     <div>
-      <div class="flex justify-between q-mt-lg">
-        <h6 class="text-dark text-subtitle1">Step 4/5</h6>
-        <router-link to="/images" style="text-decoration: none; color: black">
-          <h6 class="text-dark text-subtitle1">Skip</h6></router-link
-        >
-      </div>
-      <q-linear-progress size="10px" value="0.8" class="q-mt-sm" rounded />
       <div class="q-py-md">
         <h6 class="text-weight-bold text-h5 q-py-sm">
-          Set your distance preference
+          Tell us a little about yourself
         </h6>
         <h6 class="text-dark text-subtitle2">
-          Set the maximum distance you would like your connection to be in
+          Let people who you are and find people with similar character
         </h6>
       </div>
-      <div>
-        <q-badge color="black"> Distance (Km) </q-badge>
-
-        <q-slider
-          v-model="model"
-          :step="4"
-          label
-          :label-value="model + ' ' + 'Km'"
-          label-always
-          switch-label-side
-          color="black"
-          class="q-py-sm"
-        />
+      <div class="q-gutter-lg">
+        <q-input outlined clearable v-model="model" placeholder="Start typing">
+          <template v-slot:append>
+            <q-icon name="o_send" @click="Profession" /> </template
+        ></q-input>
       </div>
-    </div>
-
-    <div>
-      <router-link to="/images" style="text-decoration: none">
-        <q-btn
-          label="Next"
-          type="submit"
-          color="primary"
-          size="13px"
-          @click="Distance"
-          no-caps
-          style="width: 100%; margin: 0 auto; height: 2.5rem"
-        />
-      </router-link>
     </div>
   </div>
 </template>
@@ -80,19 +51,21 @@
 import { apiClient } from "app/Storage/api";
 import { Loading } from "quasar";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
-const model = ref(0);
+const model = ref(null);
 const error = ref(null);
 
-const Distance = async () => {
+const Profession = async () => {
   Loading.show();
   try {
     const res = await apiClient.patch("/profile/update/", {
-      max_match_distance_km: model.value,
+      bio: model.value,
     });
     if (res.data.success) {
       Loading.hide();
-      router.push("/images");
+      router.push("/interests");
     } else {
       error.value = res.data.message || "Error updating interests";
     }
@@ -104,7 +77,6 @@ const Distance = async () => {
     Loading.hide();
   }
 };
-
 const dismissError = () => {
   error.value = null;
   Loading.hide();
@@ -120,10 +92,5 @@ const dismissError = () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-:deep(.q-badge) {
-  background-color: white !important;
-  font-size: 1rem;
-  color: black;
 }
 </style>

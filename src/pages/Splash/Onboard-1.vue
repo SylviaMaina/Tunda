@@ -17,9 +17,10 @@
         <q-btn
           unelevated
           no-caps
-          size="18px"
+          size="13px"
           color="primary"
           class="q-px-none q-py-none"
+          style="height: 2.5rem"
           >Get started
           <q-icon color="white" name="keyboard_arrow_right" size="20px"
         /></q-btn>

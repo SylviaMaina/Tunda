@@ -13,7 +13,10 @@
     /></router-link>
 
     <div style="width: 90%; margin: 0 auto">
-      <h6 class="no-margin no-padding text-weight-medium text-h6 text-center">
+      <h6
+        class="no-margin no-padding text-center"
+        style="font-weight: 600; font-size: 18px"
+      >
         Edit profile
       </h6>
     </div>
@@ -24,6 +27,7 @@
     active-class="text-black"
     v-model="tab"
     no-caps
+    inline-label
     flat
     class="bg-grey-5 text-grey-8"
     style="width: 100%"
@@ -32,19 +36,31 @@
       to="/personal"
       name="Pesonal details"
       label="Personal details"
-      class="q-ma-none q-pa-none"
+      class="q-ma-xs q-pa-sm"
+    />
+    <q-route-tab
+      to="/editbio"
+      name="Bio details"
+      label="Bio details"
+      class="q-ma-xs q-pa-sm"
     />
     <q-route-tab
       to="/editinterests"
       name="Interests"
       label="Interests"
-      class="q-ma-none q-pa-none"
+      class="q-ma-xs q-pa-sm"
     />
     <q-route-tab
       to="/editprofession"
       name="Profession"
       label="Profession"
-      class="q-ma-none q-pa-none"
+      class="q-ma-xs q-pa-sm"
+    />
+    <q-route-tab
+      to="/editimages"
+      name="Images"
+      label="Images"
+      class="q-ma-xs q-pa-sm"
     />
   </q-tabs>
 </template>
@@ -59,6 +75,6 @@ const tab = ref("personal");
 :deep(.q-tab--active) {
   background: white;
   margin: 0.2rem;
-  padding: 0;
+  padding: 0.2rem;
 }
 </style>

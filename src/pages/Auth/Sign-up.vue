@@ -1,58 +1,109 @@
 <template>
-  <div class="q-pa-md">
-    <h6 class="text-weight-bold text-h5 q-py-sm">Create an account</h6>
-    <h6 class="text-dark text-subtitle2">Please provide your bio data...</h6>
-  </div>
-  <div class="body">
-    <q-form class="q-gutter-lg">
-      <q-input
-        outlined
-        label="Full Name"
-        type="text"
-        placeholder="Please enter"
+  <q-banner
+    v-if="error"
+    class="bg-negative text-red q-ma-sm"
+    style="border: 1px solid #ffe4e4"
+  >
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      "
+    >
+      <q-icon
+        name="error"
+        class="cursor-pointer text-red-8 q-mr-sm"
+        size="1.5rem"
       />
-      <q-input outlined type="email" label="Email" />
-      <q-input
-        outlined
-        label="Mobile Number"
-        type="tel"
-        placeholder="Please enter"
-      />
-      <q-select outlined :options="options" label="Gender" />
-      <q-input outlined type="date" label="DoB" />
-      <q-input
-        outlined
-        type="password"
-        placeholder="Please enter"
-        label="Password"
-      />
-      <q-input
-        outlined
-        type="password"
-        placeholder="Please enter"
-        label="Confirm password"
-      />
+      <diV>
+        {{
+          error ||
+          "Something went wrong, please try again or reach out to customer support"
+        }}</diV
+      >
 
-      <q-checkbox
-        v-model="right"
-        label="I understand and agree to all  Terms and Conditions, Policies"
-      />
-      <div>
-        <router-link to="/interests" style="text-decoration: none">
+      <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
+    </div>
+  </q-banner>
+  <div class="body">
+    <div class="">
+      <h6 class="text-weight-bold text-h5 q-py-sm" style="font-size: 22px">
+        Create an account
+      </h6>
+      <h6 class="text-dark text-subtitle2" style="font-size: 13px">
+        Please provide your bio data...
+      </h6>
+    </div>
+    <div class="q-my-lg" style="height: 90%">
+      <q-form class="q-gutter-lg">
+        <q-input
+          outlined
+          required
+          label="Full Name"
+          type="text"
+          v-model="full_name"
+          placeholder="Please enter"
+        />
+        <q-input outlined type="email" label="Email" v-model="email" />
+        <q-input
+          outlined
+          label="Mobile Number"
+          type="tel"
+          v-model="phone_number"
+          placeholder="Please enter"
+        />
+        <q-select outlined :options="options" label="Gender" v-model="gender" />
+        <q-input outlined type="date" label="DoB" v-model="dob" />
+        <q-input
+          outlined
+          required
+          type="password"
+          v-model="password"
+          :error="!isValid"
+          placeholder="Please enter"
+          label="Password"
+        >
+          <template v-slot:error>
+            Please use minimum 8 characters.
+          </template></q-input
+        >
+
+        <q-input
+          outlined
+          required
+          placeholder="Please enter"
+          label="Confirm password"
+          v-model="confirm_password"
+          :error="!matches"
+        >
+          <template v-slot:error>
+            Please make sure passwords match.
+          </template></q-input
+        >
+
+        <q-checkbox
+          v-model="right"
+          label="I understand and agree to all  Terms and Conditions, Policies"
+        />
+        <div>
           <q-btn
             label="Next"
             type="submit"
             color="primary"
-            style="width: 100%; margin: 0 auto"
+            size="13px"
+            @click="register"
+            style="width: 100%; margin: 0 auto; height: 2.5rem"
           />
-        </router-link>
-      </div>
-    </q-form>
+        </div>
+      </q-form>
+    </div>
     <div>
       <h6 class="text-subtitle2 flex flex-center">
         Already have an account?<span
           class="q-ml-sm text-weight-bold text-subtitle2 text-black"
-          ><router-link to="signup" style="text-decoration: none"
+          ><router-link to="/login" style="text-decoration: none; color: black"
             >Sign in</router-link
           ></span
         >
@@ -62,20 +113,108 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-const model = ref(null);
-const left = ref(true);
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
 
-const options = ["Female", "Male"];
+const options = ["female", "male"];
+const email = ref("");
+const phone_number = ref("");
+const full_name = ref("");
+const dob = ref("");
+const gender = ref(options.value);
+const password = ref("");
+const confirm_password = ref("");
+const right = ref(false);
+const router = useRouter();
+const error = ref(null);
+
+const isValid = computed(() => password.value.length >= 8);
+const matches = computed(() => password.value === confirm_password.value);
+
+const getLocation = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const locationString = `[${latitude},${longitude}]`;
+        localStorage.setItem("Location", locationString);
+      },
+      (err) => {
+        console.error("Geolocation permission denied or unavailable:", err);
+        Notify.create({
+          type: "negative",
+          message:
+            "Unable to retrieve location. Please enable location services.",
+        });
+      }
+    );
+  } else {
+    console.error("Geolocation not supported by this browser.");
+    Notify.create({
+      type: "negative",
+      message: "Geolocation not supported by this browser.",
+    });
+  }
+};
+
+const register = async () => {
+  const formattedDob = new Date(dob.value).toISOString().split("T")[0];
+
+  try {
+    const res = await axios.post(
+      "http://212.47.72.98:3001/api/v1/users/register/",
+      {
+        email: email.value,
+        phone_number: phone_number.value,
+        full_name: full_name.value,
+        gender: gender.value,
+        dob: formattedDob,
+        password: password.value,
+        confirm_password: confirm_password.value,
+      }
+    );
+
+    // Check if registration was successful
+    if (res.data.success) {
+      console.log("Registration Successful");
+      router.push("/login");
+    } else {
+      error.value = res.data.message || "Error registering";
+    }
+  } catch (err) {
+    // Set error message if registration fails
+    error.value =
+      err.response?.data?.message?.en ||
+      "Something went wrong, please try again or reach out to customer support";
+    console.error("Registration failed:", err);
+  }
+};
+
+const dismissError = () => {
+  error.value = null;
+  Loading.hide();
+};
+
+onMounted(getLocation);
 </script>
 
 <style lang="scss" scoped>
 .body {
-  height: 88vh;
+  height: 95vh;
   width: 90vw;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+:deep(.q-field__control) {
+  padding: 1rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+}
+:deep(.q-placeholder) {
+  font-size: 13px;
 }
 </style>

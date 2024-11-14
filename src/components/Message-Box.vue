@@ -7,12 +7,27 @@
         outlined
         autogrow
         label="Message"
+        style="width: 100%; margin: 0 auto; height: 2.5rem"
       >
         <template v-slot:prepend>
-          <q-btn round dense flat color="dark" icon="sentiment_satisfied" />
+          <q-btn
+            style="height: 2.5rem"
+            round
+            dense
+            flat
+            color="dark"
+            icon="sentiment_satisfied"
+          />
         </template>
         <template v-slot:append>
-          <q-btn round dense flat color="dark" icon="attach_file" />
+          <q-btn
+            style="height: 2.5rem"
+            round
+            dense
+            flat
+            color="dark"
+            icon="attach_file"
+          />
         </template>
       </q-input>
     </q-toolbar>

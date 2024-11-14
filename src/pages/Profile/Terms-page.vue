@@ -14,7 +14,10 @@
       /></router-link>
 
       <div style="width: 90%; margin: 0 auto">
-        <h6 class="no-margin no-padding text-weight-medium text-h6 text-center">
+        <h6
+          class="no-margin no-padding text-weight-medium text-h6 text-center"
+          style="font-weight: 600"
+        >
           Terms & Conditions
         </h6>
       </div>

@@ -1,15 +1,31 @@
 <template>
   <q-banner
     v-if="error"
-    class="bg-negative text-red flex justify-between q-ma-sm border-red-9"
-    style="border: 1px solid red"
+    class="bg-negative text-red q-ma-sm"
+    style="border: 1px solid #ffe4e4"
   >
-    <q-icon name="error" class="cursor-pointer text-red-8" size="1.5rem" />
-    {{
-      error ||
-      "Something went wrong, please try again or reach out to customer support"
-    }}
-    <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      "
+    >
+      <q-icon
+        name="error"
+        class="cursor-pointer text-red-8 q-mr-sm"
+        size="1.5rem"
+      />
+      <diV>
+        {{
+          error ||
+          "Something went wrong, please try again or reach out to customer support"
+        }}</diV
+      >
+
+      <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
+    </div>
   </q-banner>
   <div class="body">
     <div class="full-width">
@@ -29,15 +45,11 @@
         style="height: 20rem; width: 11/12"
       >
         <div>
-          <h6 class="no-margin text-subtitle1 text-weight-normal">
-            Email / Mobile number
-          </h6>
+          <h6 class="no-margin text-subtitle1 text-weight-normal">Email</h6>
           <q-input
-            v-model="info"
+            v-model="email"
             outlined
             stack-label
-            required
-            :type="inputType"
             placeholder="Please enter"
           />
         </div>
@@ -67,8 +79,9 @@
         <q-btn
           unelevated
           no-caps
+          style="height: 2.5rem"
           color="primary"
-          size="16px"
+          size="13px"
           @click="HandleLogin"
           >Log in
         </q-btn>
@@ -78,7 +91,7 @@
       <h6 class="text-subtitle2 flex flex-center">
         Don't have an account?<span
           class="q-ml-sm text-weight-bold text-subtitle2"
-          ><router-link to="signup" style="text-decoration: none"
+          ><router-link to="/signup" style="text-decoration: none; color: black"
             >Create account</router-link
           ></span
         >
@@ -88,49 +101,67 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { Loading } from "quasar";
+import axios from "axios";
 import { useRouter } from "vue-router";
+import AuthSession from "../../../Storage/AuthSession";
 
-const isLoggedIn = ref(false);
 const email = ref("");
-const phone_number = ref("");
 const password = ref("");
 const error = ref(null);
 const router = useRouter();
 const isPwd = ref("password");
-const info = ref("");
-const inputType = computed(() => (email.value ? "email" : "tel"));
+
+const getLocation = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const locationString = `[${latitude},${longitude}]`;
+        localStorage.setItem("Location", locationString);
+      },
+      (err) => {
+        console.error("Geolocation permission denied or unavailable:", err);
+        Notify.create({
+          type: "negative",
+          message:
+            "Unable to retrieve location. Please enable location services.",
+        });
+      }
+    );
+  } else {
+    console.error("Geolocation not supported by this browser.");
+    Notify.create({
+      type: "negative",
+      message: "Geolocation not supported by this browser.",
+    });
+  }
+};
 
 const HandleLogin = async () => {
   Loading.show();
   try {
-    const response = await fetch("/src/assets/Data.json");
-    const data = await response.json();
-
-    const trimmedInput = info.value.trim();
-    const trimmedPassword = password.value;
-
-    // User lookup logic
-    const user = data.find(
-      (u) =>
-        (u.email === trimmedInput ||
-          u.phone_number.toString() === trimmedInput) &&
-        u.password === trimmedPassword
+    const res = await axios.post(
+      "http://212.47.72.98:3001/api/v1/users/login/",
+      {
+        email: email.value,
+        password: password.value,
+      }
     );
-
-    if (user) {
+    if (res.data.success) {
+      Loading.hide();
+      AuthSession.saveSession(res.data);
       console.log("Log in success");
-      router.push("/home");
+      router.push("/bio");
     } else {
-      error.value = "Invalid email / phone number or password";
-      console.log(error.value);
+      error.value = res.data.message || "Error registering";
     }
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (err) {
     error.value =
+      err.response?.data?.message?.en ||
       "Something went wrong, please try again or reach out to customer support";
-  } finally {
+    console.error("Registration failed:", err);
     Loading.hide();
   }
 };
@@ -138,6 +169,8 @@ const dismissError = () => {
   error.value = null;
   Loading.hide();
 };
+
+onMounted(getLocation);
 </script>
 
 <style lang="scss" scoped>
