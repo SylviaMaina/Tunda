@@ -160,7 +160,7 @@ const HandleLogin = async () => {
     if (userData.user.interests.length > 0) {
       router.push("/home");
     } else {
-      router.push("bio");
+      router.push("/bio");
     }
   } catch (err) {
     error.value =
