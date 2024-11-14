@@ -109,7 +109,7 @@
       <q-btn icon="send" color="primary" flat dense @click="sendMessage"></q-btn
     ></q-input>
   </div>
-  <div v-if="previews.length > 0" class="file-previews">
+  <div v-if="previews?.length > 0" class="file-previews">
     <div v-for="(file, index) in previews" :key="index" class="file-preview">
       <q-avatar>
         <img :src="file.previewUrl" alt="File preview" />
@@ -230,7 +230,7 @@ const handleTyping = () => {
 
 const handleFileChange = (event) => {
   const files = event.target.files;
-  if (files && files.length) {
+  if (files && files?.length) {
     // Process each selected file
     Array.from(files).forEach((file) => {
       const reader = new FileReader();
@@ -248,7 +248,7 @@ const handleFileChange = (event) => {
 
 // Send a message
 const sendMessage = async () => {
-  if (!newMessage.value.trim() && previews.value.length === 0) {
+  if (!newMessage.value.trim() && previews.value?.length === 0) {
     console.log("No message or file to send");
     return; // Don't send empty messages
   }
@@ -312,7 +312,7 @@ const loadThreads = async () => {
 
     console.log("Threads response:", response);
 
-    if (response.data.success && response.data.results.docs.length > 0) {
+    if (response.data.success && response.data.results.docs?.length > 0) {
       threads.value = response.data.results.docs;
       currentThread.value = threads.value[0];
       console.log("Loaded threads:", threads.value);

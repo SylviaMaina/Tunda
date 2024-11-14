@@ -168,7 +168,7 @@ function cancelFile(index) {
 // Function to upload files to the server
 async function uploadFiles() {
   Loading.show();
-  if (files.value.length === 0) {
+  if (files.value?.length === 0) {
     return;
   }
 

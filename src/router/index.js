@@ -25,7 +25,7 @@ export default route(function () {
     const userStore = useUserStore();
 
     if (userStore.isAuthenticated) {
-      if (userStore.userInterests.length === 0) {
+      if (userStore?.userInterests?.length === 0) {
         console.log("Fetching user data...");
         await userStore.fetchUserData();
       }

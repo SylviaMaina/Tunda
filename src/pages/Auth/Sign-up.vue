@@ -129,7 +129,7 @@ const right = ref(false);
 const router = useRouter();
 const error = ref(null);
 
-const isValid = computed(() => password.value.length >= 8);
+const isValid = computed(() => password.value?.length >= 8);
 const matches = computed(() => password.value === confirm_password.value);
 
 const getLocation = () => {

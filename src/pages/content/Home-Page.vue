@@ -80,7 +80,7 @@
   </div>
   <div
     style="width: 90vw; margin: 0 auto; height: 60vh; position: relative"
-    v-if="info.length > 0 && info[0].photos && info[0].photos.length > 0"
+    v-if="info?.length > 0 && info[0].photos && info[0].photos?.length > 0"
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
   >
@@ -615,7 +615,7 @@ const handleTouchEnd = (event) => {
 };
 
 const nextItem = () => {
-  if (currentIndex.value < info.value.length - 1) {
+  if (currentIndex.value < info.value?.length - 1) {
     currentIndex.value++;
   } else {
     currentIndex.value = 0;

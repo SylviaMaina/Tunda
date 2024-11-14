@@ -102,7 +102,7 @@ const fetchInterests = async () => {
     const response = await apiClient.get("matches/");
     if (response.data.success) {
       info.value = response.data.results.docs;
-      console.log(info.value.length);
+      console.log(info?.value?.length);
     }
   } catch (error) {
     console.error("Error fetching matches:", error);
@@ -114,7 +114,7 @@ const fetchRequests = async () => {
     const response = await apiClient.get("matches/requests/");
     if (response.data.success) {
       data.value = response.data.results.docs;
-      console.log(data.value.length);
+      console.log(data?.value?.length);
     }
   } catch (error) {
     console.error("Error fetching matches:", error);

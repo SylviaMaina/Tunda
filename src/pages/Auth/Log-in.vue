@@ -61,7 +61,7 @@
             lazy-rules
             :type="isPwd ? 'password' : 'text'"
             :rules="[
-              (val) => (val && val.length > 0) || 'field cannot be blank',
+              (val) => (val && val?.length > 0) || 'field cannot be blank',
             ]"
             stack-label
             placeholder="Please enter"
@@ -157,7 +157,7 @@ const HandleLogin = async () => {
     } else {
       error.value = res.data.message || "Error registering";
     }
-    if (userData.user.interests.length > 0) {
+    if (userData?.user?.interests?.length > 0) {
       router.push("/home");
     } else {
       router.push("/bio");
