@@ -193,7 +193,6 @@ onMounted(getLocation);
 
 <style lang="scss" scoped>
 .body {
-  height: 95vh;
   width: 90vw;
   margin: 0 auto;
   display: flex;
