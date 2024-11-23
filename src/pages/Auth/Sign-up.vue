@@ -36,8 +36,8 @@
         Please provide your bio data...
       </h6>
     </div>
-    <div class="q-my-lg" style="height: 90%">
-      <q-form class="q-gutter-lg">
+    <div class="q-my-lg">
+      <q-form class="q-gutter-md">
         <q-input
           outlined
           required
@@ -193,7 +193,7 @@ onMounted(getLocation);
 
 <style lang="scss" scoped>
 .body {
-  width: 90vw;
+  padding: 20px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
