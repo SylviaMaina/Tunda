@@ -24,13 +24,6 @@ export default route(function () {
   Router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore();
 
-    if (userStore.isAuthenticated) {
-      if (userStore?.userInterests?.length === 0) {
-        console.log("Fetching user data...");
-        await userStore.fetchUserData();
-      }
-    }
-
     if (to.meta.requiresAuth && !userStore.isAuthenticated) {
       return next({ path: "/login", query: { redirect: to.fullPath } });
     }

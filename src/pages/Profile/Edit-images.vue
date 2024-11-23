@@ -2,7 +2,7 @@
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
-    style="border: 1px solid #ffe4e4"
+    style="border: 1px solid red"
   >
     <div
       style="
@@ -17,12 +17,12 @@
         class="cursor-pointer text-red-8 q-mr-sm"
         size="1.5rem"
       />
-      <diV>
+      <div>
         {{
           error ||
           "Something went wrong, please try again or reach out to customer support"
-        }}</diV
-      >
+        }}
+      </div>
 
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
@@ -30,17 +30,20 @@
 
   <div class="body">
     <div v-if="userData?.user">
-      <div class="q-py-md">
-        <h6 class="text-weight-bold text-h5 q-py-sm">Gallery</h6>
+      <div class="">
+        <h6 class="q-py-sm" style="font-size: 18px; font-weight: 600">
+          Gallery
+        </h6>
       </div>
     </div>
 
     <div class="gallery-container">
-      <div class="gallery-grid">
+      <div class="q-gutter-sm gallery-grid">
         <q-card v-for="(item, index) in info" :key="index" class="my-card">
-          <img
+          <q-img
             :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.saved_file_name}`"
             alt="Image"
+            style="object-fit: cover; width: 10rem; height: 10rem"
             @click="() => router.push('/image')"
           />
         </q-card>
@@ -245,13 +248,14 @@ const dismissError = () => {
 
 .my-card {
   width: 10rem;
-  height: 15rem;
+  height: 10rem;
 }
 
 .upload-button-container {
   display: flex;
   justify-content: center;
   width: 94%;
+  margin-bottom: 1rem;
 }
 
 .upload-file-input {

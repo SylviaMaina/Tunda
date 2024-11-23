@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
-      <router-view />
+      <router-view :user="user" />
       <Footernav />
     </q-page-container>
   </q-layout>
@@ -9,6 +9,16 @@
 
 <script setup>
 import Footernav from "../components/Footer-nav.vue";
+import { onMounted, ref } from "vue";
+import { useUserStore } from "src/stores/useUserStore";
+
+const user = ref(null);
+const userData = useUserStore();
+
+onMounted(async () => {
+  await userData.fetchUserData();
+  user.value = userData.user;
+});
 </script>
 
 <style scoped>

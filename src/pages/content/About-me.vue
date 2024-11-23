@@ -9,9 +9,12 @@
       "
       v-if="user"
     >
-      <div style="width: 100%; height: 5rem; margin-left: 0.5rem">
+      <div style="width: 100%; height: 5rem">
         <div class="row flex-center justify-between">
-          <h6 class="text-black q-ma-sm text-weight-bold">
+          <h6
+            class="text-black q-ma-sm"
+            style="font-size: 18px; font-weight: 600"
+          >
             {{ user?.full_name }}, {{ calculateAge(user.dob) }}
           </h6>
           <router-link to="/home" style="text-decoration: none">
@@ -32,10 +35,11 @@
         </div>
 
         <div
-          class="q-gutter-sm q-mb-sm"
+          class="q-gutter-sm q-mb-sm q-ml-xs"
           style="
             width: 90%;
             display: grid;
+            gap: 1rem;
             grid-template-columns: repeat(3, 6.8rem);
           "
         >
@@ -46,7 +50,7 @@
             >
               <q-badge
                 transparent
-                color="dark"
+                style="color: black; background-color: rgba(0, 0, 0, 0.16)"
                 class="q-pa-sm ellipsis-2-lines"
                 :label="interest.label"
               />
@@ -62,7 +66,7 @@
       </h6>
     </div>
     <div
-      style="width: 90%; height: 78vh; margin: 0 auto"
+      style="width: 100%; height: 78vh; margin: 0 auto"
       class="q-pa-sm overflow-auto"
       v-if="user"
     >
@@ -77,6 +81,7 @@
           <img
             :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${match?.saved_file_name}`"
             alt=".."
+            style="object-fit: cover; width: 11rem; height: 15rem"
           />
         </q-card>
       </div>
@@ -147,7 +152,7 @@ const showLike = () => {
 
 const route = useRoute();
 const user = ref(null);
-const userId = route.path.split("/").pop();
+const userId = route.query.id;
 
 // Function to fetch matches
 const getMatch = async () => {

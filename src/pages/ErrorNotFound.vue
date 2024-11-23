@@ -1,20 +1,25 @@
 <template>
-  <div
-    class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center"
-  >
-    <div>
-      <div style="font-size: 30vh">404</div>
+  <div class="fullscreen text-center q-pa-md flex flex-center relative">
+    <img
+      src="../assets/Asset 1 1.png"
+      alt="page not found"
+      style="opacity: 0.2"
+    />
+    <div class="absolute">
+      <h6 style="font-size: 4vh; font-weight: 700" class="q-pa-md">Oops!</h6>
 
-      <div class="text-h2" style="opacity: 0.4">Oops. Nothing here...</div>
+      <h6 class="text-caption text-dark q-pa-md">
+        We cannot find the page you are looking for
+      </h6>
 
       <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
+        text-color="primary"
         unelevated
-        to="/"
-        label="Go Home"
-        style="height: 2.5rem"
+        flat
+        to="/home"
+        icon="eva-arrow-back-outline"
+        label="Go back"
+        style="height: 2.5rem; font-size: 18px"
         no-caps
       />
     </div>

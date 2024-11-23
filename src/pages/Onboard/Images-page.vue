@@ -2,15 +2,23 @@
   <div class="body">
     <div>
       <div class="flex justify-between q-mt-lg">
-        <h6 class="text-dark text-subtitle1">Step 5/5</h6>
+        <h6 class="text-dark text-subtitle1">Step 7/7</h6>
         <router-link to="/home" style="text-decoration: none; color: black">
           <h6 class="text-dark text-subtitle1">Skip</h6></router-link
         >
       </div>
       <q-linear-progress size="10px" value="1.0" class="q-mt-sm" rounded />
       <div class="q-py-md">
-        <h6 class="text-weight-bold text-h5 q-py-sm">Upload images</h6>
-        <h6 class="text-dark text-subtitle2">
+        <h6
+          class="q-py-sm no-padding no-margin"
+          style="font-size: 22px; font-weight: 700"
+        >
+          Upload images
+        </h6>
+        <h6
+          class="text-dark no-padding no-margin"
+          style="font-size: 13px; font-weight: 400"
+        >
           Let people see whom they are talking to
         </h6>
       </div>

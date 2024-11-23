@@ -11,29 +11,29 @@
       <q-route-tab
         to="/home"
         name="home"
-        icon="o_home"
-        icon-size="20px"
+        icon="eva-home-outline"
+        icon-size="2rem"
         class="q-ma-none q-pa-none"
       />
       <q-route-tab
         to="/chat"
         name="chat"
-        icon="o_chat"
-        icon-size="20px"
+        icon="eva-message-circle-outline"
+        icon-size="2rem"
         class="q-ma-none q-pa-none"
       />
       <q-route-tab
         to="/likes"
         name="favorite"
-        icon="o_favorite"
-        icon-size="20px"
+        icon="eva-heart-outline"
+        icon-size="2rem"
         class="q-ma-none q-pa-none"
       />
       <q-route-tab
         to="/profile"
         name="person"
-        icon="o_person"
-        icon-size="20px"
+        icon="eva-person-outline"
+        icon-size="2rem"
         class="q-ma-none q-pa-none"
       />
     </q-tabs>

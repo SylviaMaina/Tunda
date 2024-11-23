@@ -26,7 +26,7 @@
     </div>
 
     <div
-      style="display: flex; justify-content: space-between; width: 94%"
+      style="display: flex; justify-content: space-between; width: 100%"
       class="q-my-lg"
     >
       <q-btn
@@ -35,7 +35,6 @@
         size="0.9rem"
         no-caps
         flat
-        @click="EditProfile"
         class="q-mr-sm"
         style="width: 9.6rem; height: 2.5rem; border: 1px solid grey"
       />
@@ -44,6 +43,7 @@
           label="Update details"
           type="submit"
           color="primary"
+          @click="EditProfile"
           size="0.9rem"
           no-caps
           style="width: 9.6rem; height: 2.5rem"
@@ -57,6 +57,7 @@ import { useUserStore } from "src/stores/useUserStore";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { apiClient } from "app/Storage/api";
 
 const router = useRouter();
 const userData = useUserStore();
@@ -92,8 +93,8 @@ const EditProfile = async () => {
   }
 
   try {
-    const res = await axios.post(
-      "http://212.47.72.98:3001/api/v1/users/update/",
+    const res = await apiClient.patch(
+      "http://212.47.72.98:3001/api/v1/profile/update/",
       payload
     );
     if (res.data.success) {

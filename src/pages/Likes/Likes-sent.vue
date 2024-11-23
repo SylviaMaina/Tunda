@@ -10,6 +10,7 @@
         <img
           :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
           alt=".."
+          style="object-fit: fill; width: 10rem; height: 15rem"
         />
         <div class="absolute-bottom text-subtitle2 text-start">
           <h6 class="text-white q-ma-sm text-weight-bold text-subtitle2">

@@ -3,7 +3,7 @@
     style="
       width: 90%;
       margin: 0 auto;
-      height: 5rem;
+      height: 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -11,25 +11,20 @@
   >
     <div
       style="
-        width: 50%;
-        height: 5rem;
+        width: 70%;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: start;
       "
     >
-      <div
-        style="
-          width: 70%;
-          display: flex;
-          flex-direction: column;
-          align-items: start;
-        "
+      <h6
+        class="no-margin no-padding"
+        style="font-size: 18px; font-weight: 600"
       >
-        <h6 class="no-margin no-padding text-weight-medium text-h6">Chats</h6>
-      </div>
+        Chats
+      </h6>
     </div>
-    <q-icon color="dark" name="o_chat" size="20px" />
+    <q-icon color="dark" name="eva-message-circle-outline" size="20px" />
   </div>
   <div class="q-px-sm">
     <q-input
@@ -44,58 +39,92 @@
     </q-input>
   </div>
   <q-list>
-    <router-link to="/message" style="text-decoration: none; color: #000">
-      <q-item
-        v-for="contact in offline"
-        :key="contact.id"
-        class="q-my-sm"
-        clickable
-        v-ripple
+    <div v-for="contact in threads" :key="contact.id">
+      <router-link
+        :to="{ path: '/threads/view', query: { id: contact.id } }"
+        style="text-decoration: none; color: #000"
       >
-        <q-item-section avatar>
-          <q-avatar>
-            <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`" />
-          </q-avatar>
-        </q-item-section>
+        <q-item class="q-my-sm" clickable v-ripple>
+          <q-item-section avatar>
+            <q-avatar>
+              <img
+                :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${
+                  contact.sender_id.id === user?.id
+                    ? contact.receiver_id?.profile_photo
+                    : contact.sender_id?.profile_photo
+                }`"
+                alt="User Avatar"
+                style="object-fit: cover"
+              />
+            </q-avatar>
+          </q-item-section>
 
-        <q-item-section>
-          <q-item-label>{{ contact.name }}</q-item-label>
-          <q-item-label caption lines="1">{{ contact.email }}</q-item-label>
-        </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{
+                contact.sender_id.id === user?.id
+                  ? contact.receiver_id?.full_name || "Unknown User"
+                  : contact.sender_id?.full_name || "Unknown User"
+              }}</q-item-label
+            >
+            <q-item-label caption lines="1">{{
+              contact.last_message?.message || "No message"
+            }}</q-item-label>
+          </q-item-section>
 
-        <q-item-section side top>
-          <q-item-label caption>5 min ago</q-item-label>
-          <q-item-label>
-            <q-icon name="sell" class="q-pl-sm" color="dark" />
-            <q-chip color="primary" text-color="white" class="q-pa-sm">
-              5
-            </q-chip></q-item-label
-          >
-        </q-item-section>
-      </q-item></router-link
-    >
+          <q-item-section side top>
+            <q-item-label caption>5 min ago</q-item-label>
+            <q-item-label>
+              <q-icon name="sell" class="q-pl-sm" color="dark" />
+              <q-chip color="primary" text-color="white" class="q-pa-xs">
+                5
+              </q-chip></q-item-label
+            >
+          </q-item-section>
+        </q-item></router-link
+      >
+    </div>
   </q-list>
 </template>
 
 <script setup>
-const offline = [
-  {
-    id: 5,
-    name: "Brunhilde Panswick",
-    email: "bpanswick4@csmonitor.com",
-    avatar: "avatar2.jpg",
-  },
-  {
-    id: 6,
-    name: "Winfield Stapforth",
-    email: "wstapforth5@pcworld.com",
-    avatar: "avatar6.jpg",
-  },
-];
+import { apiClient } from "app/Storage/api";
+import AuthSession from "app/Storage/AuthSession";
+import { onMounted, ref } from "vue";
 
-const setup = () => {
-  offline;
+const threads = ref([]);
+const token = AuthSession.getToken();
+
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true,
+  },
+});
+
+// Load all threads for the user
+const loadThreads = async () => {
+  try {
+    const response = await apiClient.get("messages/threads/", {
+      headers: { Authorization: token },
+    });
+    const results = response.data.results;
+
+    threads.value = results.docs.map((thread) => ({
+      ...thread,
+      otherPerson:
+        thread.sender_id.id === props.user?.id
+          ? thread.receiver_id.id
+          : thread.sender_id.id,
+    }));
+  } catch (error) {
+    console.error("Error loading messages:", error);
+  }
 };
+
+onMounted(async () => {
+  await loadThreads();
+});
 </script>
 
 <style lang="scss" scoped>

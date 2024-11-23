@@ -13,7 +13,6 @@ export const useUserStore = defineStore("user", {
 
       try {
         const response = await apiClient.get("/users/me/");
-        this.userInterests = response.data?.results?.photos || [];
         this.user = response.data?.results || [];
       } catch (error) {
         console.error("Failed to fetch user data:", error);

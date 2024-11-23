@@ -1,7 +1,7 @@
 <template>
   <q-banner
     v-if="error"
-    class="bg-negative text-red q-ma-sm"
+    class="bg-negative text-red text-justify q-ma-xs"
     style="border: 1px solid red"
   >
     <div
@@ -27,39 +27,44 @@
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
   </q-banner>
-  <div
-    style="
-      width: 90%;
-      margin: 0 auto;
-      height: 5rem;
-      display: flex;
-      align-items: center;
-    "
-  >
-    <router-link to="/profile">
-      <q-icon color="dark" name="chevron_left" size="20px"
-    /></router-link>
-
-    <div style="width: 90%; margin: 0 auto">
-      <h6 class="no-margin no-padding text-weight-medium text-h6 text-center">
-        Edit bio
-      </h6>
-    </div>
-  </div>
-  <div class="body" v-if="userData.user">
+  <div class="body">
     <div>
-      <q-form class="q-gutter-lg">
-        <q-input
-          v-model="model"
-          outlined
-          type="text"
-          :placeholder="userData.user.bio"
+      <div class="flex justify-between q-mt-lg">
+        <h6 class="text-dark text-subtitle1">Step 1/7</h6>
+        <router-link to="/bio" style="text-decoration: none; color: black">
+          <h6 class="text-dark text-subtitle1">Skip</h6></router-link
         >
-          <template v-slot:append>
-            <q-icon name="o_send" class="cursor-pointer" @click="EditBio" />
-          </template>
-        </q-input>
-      </q-form>
+      </div>
+      <q-linear-progress size="10px" value="0.1" class="q-mt-sm" rounded />
+      <div class="q-py-md">
+        <h6
+          class="q-py-sm no-padding no-margin"
+          style="font-size: 22px; font-weight: 700"
+        >
+          Please verify your email
+        </h6>
+        <h6
+          class="text-dark no-padding no-margin"
+          style="font-size: 13px; font-weight: 400"
+        >
+          Input the verification code sent to the email you provided
+          {{ userData.user.email }}
+        </h6>
+      </div>
+      <div class="q-gutter-lg">
+        <q-input outlined clearable v-model="model" label="Enter code" />
+      </div>
+    </div>
+    <div>
+      <q-btn
+        label="Next"
+        type="submit"
+        color="primary"
+        size="13px"
+        @click="Profession"
+        no-caps
+        style="width: 100%; margin: 0 auto; height: 2.5rem"
+      />
     </div>
   </div>
 </template>
@@ -72,20 +77,20 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
-const userData = useUserStore();
-const model = ref("");
-
+const model = ref(null);
 const error = ref(null);
+const userData = useUserStore();
 
-const EditBio = async () => {
+const Profession = async () => {
   Loading.show();
   try {
     const res = await apiClient.patch("/profile/update/", {
-      bio: model.value,
+      id: userData.user.id,
+      confirmation_code: model.value,
     });
     if (res.data.success) {
       Loading.hide();
-      router.push("/profile");
+      router.push("/bio");
     } else {
       error.value = res.data.message || "Error updating interests";
     }
@@ -102,11 +107,10 @@ const dismissError = () => {
   Loading.hide();
 };
 
-onMounted(() => {
-  userData.fetchUserData();
+onMounted(async () => {
+  await userData.fetchUserData();
+  console.log(userData.user);
 });
-
-console.log(userData.user);
 </script>
 
 <style lang="scss" scoped>

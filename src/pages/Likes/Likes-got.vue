@@ -2,20 +2,21 @@
   <div
     style="width: 90%; height: 78vh; margin: 0 auto"
     class="q-pa-sm overflow-auto"
-    v-if="data?.length > 0"
+    v-if="otherPersons?.length > 0"
   >
     <div
       style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem"
     >
       <q-card
-        v-for="(match, index) in data"
+        v-for="(match, index) in otherPersons"
         :key="index"
         class="my-card"
-        @click="() => router.push(`/start/${match.id}`)"
+        @click="() => router.push({ path: '/start', query: { id: match.id } })"
       >
         <img
           :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${match.photos[0]?.saved_file_name}`"
           alt=".."
+          style="object-fit: fill; width: 10rem; height: 15rem"
         />
         <div class="absolute-bottom text-subtitle2 text-start">
           <h6 class="text-white q-ma-sm text-weight-bold text-subtitle2">
@@ -25,7 +26,7 @@
       </q-card>
     </div>
   </div>
-  <div v-if="data?.length === 0">
+  <div v-if="otherPersons?.length === 0">
     <h6
       class="text-caption text-dark"
       style="
@@ -47,40 +48,68 @@
 import { ref, onMounted } from "vue";
 import { apiClient } from "app/Storage/api";
 import { useRouter } from "vue-router";
+import { useUserStore } from "src/stores/useUserStore";
 
-const info = ref([]);
-const data = ref([]);
+const matches = ref([]); // Array to hold match details
+const otherPersons = ref([]); // Array to hold user profiles of matches
 const router = useRouter();
+const userData = useUserStore();
 
-const fetchInterests = async () => {
+// Fetch match data for the logged-in user
+const fetchMatches = async () => {
   try {
     const response = await apiClient.get("matches/");
     if (response.data.success) {
-      info.value = response.data.results.docs;
-      await fetchMatchDetails(info.value);
-      console.log(info.value);
+      // Extract the list of matches
+      const rawMatches = response.data.results.docs;
+
+      // Map matches to determine IDs of the other persons
+      matches.value = rawMatches.map((match) => {
+        return match.match_1.id === userData.user.id
+          ? match.match_2.id
+          : match.match_1.id;
+      });
     }
   } catch (error) {
     console.error("Error fetching match requests:", error);
   }
 };
 
-const fetchMatchDetails = async (matchRequests) => {
+// Fetch user profiles for all matched IDs
+const fetchMatchProfiles = async () => {
   try {
-    const matchIds = matchRequests.map((request) => request.matched_by);
+    otherPersons.value = [];
 
-    const matchDetailsResponses = await Promise.all(
-      matchIds.map(async (id) => {
-        const response = await apiClient.get(`matches/profile/?user_id=${id}`);
-        return response.data.success ? response.data.results : null;
-      })
-    );
-    const matchedUsers = matchDetailsResponses.filter((user) => user !== null);
-    data.value = matchedUsers;
+    // Fetch profiles for all matched IDs
+    const profilePromises = matches.value.map(async (matchId) => {
+      const response = await apiClient.get(
+        `matches/profile/?user_id=${matchId}`
+      );
+      return response.data.results;
+    });
+
+    // Resolve all profile promises
+    otherPersons.value = await Promise.all(profilePromises);
   } catch (error) {
-    console.error("Error fetching match details:", error);
+    console.error("Error fetching match profiles:", error);
   }
 };
-onMounted(fetchInterests);
+
+// Initialize component
+onMounted(async () => {
+  try {
+    await userData.fetchUserData();
+    await fetchMatches();
+    await fetchMatchProfiles();
+  } catch (error) {
+    console.error("Error during initialization:", error);
+  }
+});
 </script>
-<style lang="scss" scoped></style>
+
+<style lang="scss" scoped>
+.my-card {
+  width: 10rem;
+  height: 10rem;
+}
+</style>

@@ -2,7 +2,7 @@
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
-    style="border: 1px solid #ffe4e4"
+    style="border: 1px solid red"
   >
     <div
       style="
@@ -17,12 +17,12 @@
         class="cursor-pointer text-red-8 q-mr-sm"
         size="1.5rem"
       />
-      <diV>
+      <div>
         {{
           error ||
           "Something went wrong, please try again or reach out to customer support"
-        }}</diV
-      >
+        }}
+      </div>
 
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
@@ -102,11 +102,12 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { Loading } from "quasar";
+import { Loading, Notify } from "quasar";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import AuthSession from "../../../Storage/AuthSession";
 import { useUserStore } from "src/stores/useUserStore";
+import { Geolocation } from "@capacitor/geolocation";
 
 const email = ref("");
 const password = ref("");
@@ -114,28 +115,18 @@ const error = ref(null);
 const router = useRouter();
 const isPwd = ref("password");
 
-const getLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const locationString = `[${latitude},${longitude}]`;
-        localStorage.setItem("Location", locationString);
-      },
-      (err) => {
-        console.error("Geolocation permission denied or unavailable:", err);
-        Notify.create({
-          type: "negative",
-          message:
-            "Unable to retrieve location. Please enable location services.",
-        });
-      }
-    );
-  } else {
-    console.error("Geolocation not supported by this browser.");
+const getLocation = async () => {
+  try {
+    const position = await Geolocation.getCurrentPosition();
+    const { latitude, longitude } = position.coords;
+    const locationString = `[${latitude}, ${longitude}]`;
+    localStorage.setItem("Location", locationString);
+    console.log("Location saved", locationString);
+  } catch (error) {
+    console.error("Geolocation permission denied or unavailable:", error);
     Notify.create({
       type: "negative",
-      message: "Geolocation not supported by this browser.",
+      message: "Unable to retrieve location. Please enable location services.",
     });
   }
 };
@@ -157,10 +148,10 @@ const HandleLogin = async () => {
     } else {
       error.value = res.data.message || "Error registering";
     }
-    if (userData?.user?.interests?.length > 0) {
+    if (userData?.user?.email_confirmed === true) {
       router.push("/home");
     } else {
-      router.push("/bio");
+      router.push("/verify");
     }
   } catch (err) {
     error.value =

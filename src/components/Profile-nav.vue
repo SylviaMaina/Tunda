@@ -29,8 +29,8 @@
     no-caps
     inline-label
     flat
-    class="bg-grey-5 text-grey-8"
-    style="width: 100%"
+    class="text-grey-8"
+    style="width: 100%; background-color: #eeeeee"
   >
     <q-route-tab
       to="/personal"

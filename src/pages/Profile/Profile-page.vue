@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 90vh; width: 100vw" v-if="userData.user">
+  <div style="height: 90vh; width: 100vw" v-if="user">
     <div
       style="
         width: 90%;
@@ -28,8 +28,8 @@
           "
         >
           <h6
-            class="no-margin no-padding text-subtitle1"
-            style="font-weight: 600"
+            class="no-margin no-padding"
+            style="font-size: 18px; font-weight: 600"
           >
             My Profile
           </h6>
@@ -44,28 +44,39 @@
         flex-direction: column;
         width: 100%;
         margin: 0 auto;
+
         justify-content: space-between;
       "
     >
-      <q-img
-        src="../../assets/Rectangle.png"
-        alt="tunda app"
-        style="
-          width: 5rem;
-          height: 5rem;
-          border-radius: 100%;
-          object-fit: cover;
-        "
-      >
-        <q-icon
-          class="absolute all-pointer-events q-pa-xs bg-red"
-          size="1rem"
-          name="edit"
-          color="black"
-          style="bottom: 0.2rem; right: 0.6rem; border-radius: 100%"
-        />
-      </q-img>
-      <h6>{{ userData.user.full_name }}</h6>
+      <div style="position: relative">
+        <q-img
+          :src="
+            user.photos[0]?.saved_file_name
+              ? `http://212.47.72.98:3001/api/v1/media/file/?file_path=${user.photos[0]?.saved_file_name}`
+              : '../../assets/Asset 1 1.png'
+          "
+          alt="tunda app"
+          style="
+            width: 5rem;
+            height: 5rem;
+            border-radius: 100%;
+            object-fit: cover;
+          "
+        >
+        </q-img>
+        <router-link to="/editimages">
+          <q-icon
+            class="absolute all-pointer-events q-pa-xs bg-red"
+            size="1rem"
+            name="edit"
+            color="black"
+            style="bottom: 0.2rem; right: 0rem; border-radius: 100%"
+        /></router-link>
+      </div>
+
+      <h6 style="font-size: 18px; font-weight: 600">
+        {{ user.full_name }}
+      </h6>
       <div
         style="
           display: flex;
@@ -78,7 +89,7 @@
           class="text-subtitle2 text-grey q-my-sm"
           style="border-right: 1px solid #bababa; padding-right: 0.3rem"
         >
-          {{ calculateAge(userData.user.dob) }} years old
+          {{ calculateAge(user.dob) }} years old
         </h6>
         <div style="display: flex; align-items: center">
           <q-icon name="location_on" color="grey-5" />
@@ -107,12 +118,7 @@
 
         <q-item-section side top>
           <q-item-label>
-            <q-icon
-              name="chevron_right"
-              class="q-pl-sm"
-              color="dark"
-              size="1.5rem"
-            />
+            <q-icon name="chevron_right" color="dark" size="20px" />
           </q-item-label>
         </q-item-section> </q-item
     ></router-link>
@@ -133,7 +139,7 @@
         <router-link to="/personal" style="text-decoration: none; color: black">
           <q-item>
             <q-item-section avatar style="width: 2rem">
-              <q-icon size="20px" name="o_person" />
+              <q-icon size="20px" name="eva-person-outline" />
             </q-item-section>
 
             <q-item-section>
@@ -157,7 +163,7 @@
         >
           <q-item>
             <q-item-section avatar style="width: 2rem">
-              <q-icon size="20px" name="o_visibility" />
+              <q-icon size="20px" name="eva-eye-outline" />
             </q-item-section>
 
             <q-item-section>
@@ -203,7 +209,7 @@
         <router-link to="/terms" style="text-decoration: none; color: black">
           <q-item>
             <q-item-section avatar style="width: 2rem">
-              <q-icon size="20px" name="o_language" />
+              <q-icon size="20px" name="eva-globe-outline" />
             </q-item-section>
 
             <q-item-section>
@@ -247,7 +253,7 @@
         <router-link to="/aboutus" style="text-decoration: none; color: black">
           <q-item>
             <q-item-section avatar style="width: 2rem">
-              <q-icon size="20px" name="o_visibility" />
+              <q-icon size="20px" name="eva-eye-outline" />
             </q-item-section>
 
             <q-item-section>
@@ -269,7 +275,7 @@
         <router-link to="/contact" style="text-decoration: none; color: black">
           <q-item>
             <q-item-section avatar style="width: 2rem">
-              <q-icon size="20px" name="o_help" />
+              <q-icon size="20px" name="eva-question-mark-circle-outline" />
             </q-item-section>
 
             <q-item-section>
@@ -315,16 +321,16 @@
 
 <script setup>
 import AuthSession from "app/Storage/AuthSession";
-import { useUserStore } from "src/stores/useUserStore";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const userData = useUserStore();
-
-onMounted(() => {
-  userData.fetchUserData();
+defineProps({
+  user: {
+    type: Object,
+    required: true,
+  },
 });
 
 function calculateAge(dob) {

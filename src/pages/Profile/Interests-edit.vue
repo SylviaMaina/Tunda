@@ -2,7 +2,9 @@
   <div class="body" v-if="userData?.user">
     <div class="" style="overflow-y: auto; height: 80vh">
       <div>
-        <h6 class="text-weight-bold text-subtitle1 q-py-sm">Your Interests</h6>
+        <h6 class="q-py-sm" style="font-size: 18px; font-weight: 600">
+          Your Interests
+        </h6>
         <div
           style="
             height: 20vh;
@@ -18,7 +20,11 @@
                 v-model="interest.selected"
                 no-caps
                 flat
-                style="border: 1px solid gray; height: 2.5rem"
+                style="
+                  border: 1px solid #ff6f61;
+                  height: 2.5rem;
+                  color: #ff6f61;
+                "
                 toggle-color="primary"
                 :options="[{ label: interest.label, value: interest.value }]"
               />
@@ -26,10 +32,10 @@
           </div>
         </div>
       </div>
-      <h6>Select othe interests</h6>
+      <h6 style="font-size: 18px; font-weight: 600">Select othe interests</h6>
       <div class="q-my-sm" v-for="item in interest" :key="item.name">
         <div>
-          <h6 class="text-weight-bold text-subtitle1 q-py-sm">
+          <h6 class="q-py-sm" style="font-size: 18px; font-weight: 600">
             {{ item.name }}
           </h6>
           <div
@@ -143,7 +149,7 @@ const updateInterests = async () => {
 
 <style lang="scss" scoped>
 .body {
-  height: 80vh;
+  height: 75vh;
   width: 95vw;
   margin: 0 auto;
   padding: 0.2rem;

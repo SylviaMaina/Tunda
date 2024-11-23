@@ -2,7 +2,7 @@
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
-    style="border: 1px solid #ffe4e4"
+    style="border: 1px solid red"
   >
     <div
       style="
@@ -17,12 +17,12 @@
         class="cursor-pointer text-red-8 q-mr-sm"
         size="1.5rem"
       />
-      <diV>
+      <div>
         {{
           error ||
           "Something went wrong, please try again or reach out to customer support"
-        }}</diV
-      >
+        }}
+      </div>
 
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
@@ -179,7 +179,7 @@
         class="q-mx-sm"
         @click="
           () => {
-            router.push(`/messages/${info.id}`);
+            router.push({ path: '/threads/view', query: { id: info.id } });
           }
         "
       >
@@ -213,7 +213,7 @@ const route = useRoute();
 const info = ref(null);
 const error = ref(null);
 const router = useRouter();
-const userId = route.path.split("/").pop();
+const userId = route.query.id;
 
 // Function to fetch matches
 const getMatch = async () => {

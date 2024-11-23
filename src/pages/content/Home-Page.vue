@@ -2,7 +2,7 @@
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
-    style="border: 1px solid #ffe4e4"
+    style="border: 1px solid red"
   >
     <div
       style="
@@ -17,12 +17,12 @@
         class="cursor-pointer text-red-8 q-mr-sm"
         size="1.5rem"
       />
-      <diV>
+      <div>
         {{
           error ||
           "Something went wrong, please try again or reach out to customer support"
-        }}</diV
-      >
+        }}
+      </div>
 
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
@@ -188,7 +188,7 @@
       </q-fab>
       <q-icon
         size="2.5rem"
-        name="o_favorite"
+        name="eva-heart-outline"
         color="white"
         style="background: #ff6f61; border-radius: 100%"
         class="q-pa-sm q-mx-sm"
@@ -507,7 +507,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { Loading, useQuasar } from "quasar";
-import { useUserStore } from "src/stores/useUserStore";
 import { apiClient } from "app/Storage/api";
 import AuthSession from "app/Storage/AuthSession";
 
@@ -522,6 +521,13 @@ const touchStart = ref(0);
 const touchEnd = ref(0);
 const error = ref(null);
 const info = ref([]);
+
+defineProps({
+  user: {
+    type: Object,
+    required: true,
+  },
+});
 
 const getMatch = async () => {
   const minAge = age.value.min;
@@ -679,11 +685,7 @@ const showLike = async () => {
   }
 };
 
-const userData = useUserStore();
-
 onMounted(async () => {
-  await userData.fetchUserData();
-  console.log("User data:", userData.user);
   await getMatch();
   console.log("Match info:", info.value);
 });

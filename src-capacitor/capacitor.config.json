@@ -1,5 +1,13 @@
 {
   "appId": "com.tunda.app",
   "appName": "Tunda App",
-  "webDir": "www"
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "backgroundColor": "#ff6f61",
+      "launchShowDuration": 3000,
+      "launchAutoHide": true
+    }
+  }
 }

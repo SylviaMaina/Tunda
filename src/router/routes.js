@@ -19,6 +19,11 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/verify",
+    component: () => import("pages/Onboard/Verify-email.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/looking",
     component: () => import("pages/Onboard/Looking-page.vue"),
     meta: { requiresAuth: true },
@@ -130,7 +135,7 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
-        path: "/start/:id",
+        path: "/start",
         name: "start chat",
         component: () => import("pages/Chat/Start-chat.vue"),
         children: [],
@@ -138,7 +143,7 @@ const routes = [
     ],
   },
   {
-    path: "/messages/:id",
+    path: "/threads/view",
     name: "message page",
     component: () => import("pages/Chat/Message-page.vue"),
     meta: { requiresAuth: true },

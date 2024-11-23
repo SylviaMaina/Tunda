@@ -2,7 +2,7 @@
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
-    style="border: 1px solid #ffe4e4"
+    style="border: 1px solid red"
   >
     <div
       style="
@@ -17,12 +17,12 @@
         class="cursor-pointer text-red-8 q-mr-sm"
         size="1.5rem"
       />
-      <diV>
+      <div>
         {{
           error ||
           "Something went wrong, please try again or reach out to customer support"
-        }}</diV
-      >
+        }}
+      </div>
 
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
@@ -31,7 +31,7 @@
   <div class="body">
     <div>
       <div class="flex justify-between q-mt-lg">
-        <h6 class="text-dark text-subtitle1">Step 1/5</h6>
+        <h6 class="text-dark text-subtitle1">Step 3/7</h6>
         <router-link
           to="/profession"
           style="text-decoration: none; color: black"
@@ -40,50 +40,52 @@
         >
       </div>
 
-      <q-linear-progress size="10px" value="0.2" class="q-mt-sm" rounded />
+      <q-linear-progress size="10px" value="0.5" class="q-mt-sm" rounded />
 
       <div class="q-py-md">
-        <h6 class="text-weight-bold text-h5 q-py-sm">
+        <h6
+          class="q-py-sm no-padding no-margin"
+          style="font-size: 22px; font-weight: 700"
+        >
           What are your interests
         </h6>
-        <h6 class="text-dark text-subtitle2">
+        <h6
+          class="text-dark no-padding no-margin"
+          style="font-size: 13px; font-weight: 400"
+        >
           Meet people with similar interests
         </h6>
       </div>
-
-      <div
-        class="q-gutter-sm q-my-sm"
-        v-for="item in interest"
-        :key="item.name"
-      >
-        <div>
-          <h6 class="text-weight-bold text-subtitle1 q-py-sm">
-            {{ item.name }}
-          </h6>
-          <div
-            style="display: grid; grid-template-columns: repeat(3, 8rem)"
-            class="q-gutter-sm"
-          >
-            <div v-for="content in item.interests" :key="content.label">
-              <q-btn-toggle
-                v-model="content.selected"
-                no-caps
-                size="13px"
-                flat
-                style="
-                  border: 1px solid gray;
-                  height: 2.5rem;
-                  width: max-content;
-                "
-                toggle-color="primary"
-                :options="[{ label: content.label, value: content.value }]"
-              />
+      <div style="overflow-y: auto; overflow-x: hidden; height: 58vh">
+        <div class="q-my-sm" v-for="item in interest" :key="item.name">
+          <div>
+            <h6 class="text-weight-bold text-subtitle1 q-py-sm">
+              {{ item.name }}
+            </h6>
+            <div
+              style="display: grid; grid-template-columns: repeat(3, 8rem)"
+              class="q-gutter-sm"
+            >
+              <div v-for="content in item.interests" :key="content.label">
+                <q-btn-toggle
+                  v-model="content.selected"
+                  no-caps
+                  size="13px"
+                  flat
+                  style="
+                    border: 1px solid gray;
+                    height: 2.5rem;
+                    width: max-content;
+                  "
+                  toggle-color="primary"
+                  :options="[{ label: content.label, value: content.value }]"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <div>
       <q-btn
         label="Next"

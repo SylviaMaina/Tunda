@@ -2,7 +2,7 @@
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
-    style="border: 1px solid #ffe4e4"
+    style="border: 1px solid red"
   >
     <div
       style="
@@ -17,19 +17,22 @@
         class="cursor-pointer text-red-8 q-mr-sm"
         size="1.5rem"
       />
-      <diV>
+      <div>
         {{
           error ||
           "Something went wrong, please try again or reach out to customer support"
-        }}</diV
-      >
+        }}
+      </div>
 
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
   </q-banner>
   <div class="body">
     <div class="">
-      <h6 class="text-weight-bold text-h5 q-py-sm" style="font-size: 22px">
+      <h6
+        class="q-py-sm no-padding no-margin"
+        style="font-size: 22px; font-weight: 700"
+      >
         Create an account
       </h6>
       <h6 class="text-dark text-subtitle2" style="font-size: 13px">
@@ -116,6 +119,8 @@
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { Geolocation } from "@capacitor/geolocation";
+import { Notify } from "quasar";
 
 const options = ["female", "male"];
 const email = ref("");
@@ -132,28 +137,18 @@ const error = ref(null);
 const isValid = computed(() => password.value?.length >= 8);
 const matches = computed(() => password.value === confirm_password.value);
 
-const getLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const locationString = `[${latitude},${longitude}]`;
-        localStorage.setItem("Location", locationString);
-      },
-      (err) => {
-        console.error("Geolocation permission denied or unavailable:", err);
-        Notify.create({
-          type: "negative",
-          message:
-            "Unable to retrieve location. Please enable location services.",
-        });
-      }
-    );
-  } else {
-    console.error("Geolocation not supported by this browser.");
+const getLocation = async () => {
+  try {
+    const position = await Geolocation.getCurrentPosition();
+    const { latitude, longitude } = position.coords;
+    const locationString = `[${latitude}, ${longitude}]`;
+    localStorage.setItem("Location", locationString);
+    console.log("Location saved", locationString);
+  } catch (error) {
+    console.error("Geolocation permission denied or unavailable:", error);
     Notify.create({
       type: "negative",
-      message: "Geolocation not supported by this browser.",
+      message: "Unable to retrieve location. Please enable location services.",
     });
   }
 };

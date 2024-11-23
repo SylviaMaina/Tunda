@@ -2,7 +2,7 @@
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
-    style="border: 1px solid #ffe4e4"
+    style="border: 1px solid red"
   >
     <div
       style="
@@ -17,12 +17,12 @@
         class="cursor-pointer text-red-8 q-mr-sm"
         size="1.5rem"
       />
-      <diV>
+      <div>
         {{
           error ||
           "Something went wrong, please try again or reach out to customer support"
-        }}</diV
-      >
+        }}
+      </div>
 
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
@@ -30,17 +30,23 @@
   <div class="body">
     <div>
       <div class="flex justify-between q-mt-lg">
-        <h6 class="text-dark text-subtitle1">Step 4/5</h6>
+        <h6 class="text-dark text-subtitle1">Step 6/7</h6>
         <router-link to="/images" style="text-decoration: none; color: black">
           <h6 class="text-dark text-subtitle1">Skip</h6></router-link
         >
       </div>
-      <q-linear-progress size="10px" value="0.8" class="q-mt-sm" rounded />
+      <q-linear-progress size="10px" value="0.9" class="q-mt-sm" rounded />
       <div class="q-py-md">
-        <h6 class="text-weight-bold text-h5 q-py-sm">
+        <h6
+          class="q-py-sm no-padding no-margin"
+          style="font-size: 22px; font-weight: 700"
+        >
           Set your distance preference
         </h6>
-        <h6 class="text-dark text-subtitle2">
+        <h6
+          class="text-dark no-padding no-margin"
+          style="font-size: 13px; font-weight: 400"
+        >
           Set the maximum distance you would like your connection to be in
         </h6>
       </div>

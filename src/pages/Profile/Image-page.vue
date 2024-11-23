@@ -15,8 +15,8 @@
 
       <div style="width: 90%; margin: 0 auto">
         <h6
-          class="no-margin no-padding text-weight-medium text-h6 text-center"
-          style="font-weight: 600"
+          class="no-margin no-padding text-center"
+          style="font-size: 18px; font-weight: 600"
         >
           Gallery
         </h6>
@@ -60,7 +60,7 @@
       <q-carousel-control>
         <q-btn
           flat
-          size="16px"
+          size="20px"
           round
           text-color="black"
           icon="chevron_left"
@@ -68,7 +68,7 @@
         />
         <q-btn
           flat
-          size="16px"
+          size="20px"
           round
           text-color="black"
           icon="chevron_right"
