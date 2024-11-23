@@ -4,7 +4,7 @@
       style="
         width: 90%;
         margin: 0 auto;
-        height: 3rem;
+        height: 4rem;
         display: flex;
         align-items: center;
         justify-content: space-between;

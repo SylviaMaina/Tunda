@@ -1,6 +1,6 @@
 <template>
   <q-header
-    class="bg-transparent q-mb-sm"
+    class="bg-transparent q-pa-sm"
     flat
     v-if="info?.length || data?.length"
   >

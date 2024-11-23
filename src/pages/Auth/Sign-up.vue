@@ -29,10 +29,7 @@
   </q-banner>
   <div class="body">
     <div class="">
-      <h6
-        class="q-py-sm no-padding no-margin"
-        style="font-size: 22px; font-weight: 700"
-      >
+      <h6 class="q-py-sm no-margin" style="font-size: 22px; font-weight: 700">
         Create an account
       </h6>
       <h6 class="text-dark text-subtitle2" style="font-size: 13px">

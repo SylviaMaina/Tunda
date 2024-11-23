@@ -31,7 +31,7 @@
     style="
       width: 90%;
       margin: 0 auto;
-      height: 5rem;
+      height: 6rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -358,7 +358,7 @@
       Come back again to see all new people to match with
     </h6>
     <q-dialog v-model="filter" position="bottom">
-      <q-card style="width: 90%; height: 70%; margin: 0 auto" class="q-px-sm">
+      <q-card style="width: 90%; height: 70%; margin: 0 auto" class="q-pa-md">
         <div
           style="
             width: 50%;

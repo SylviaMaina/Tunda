@@ -8,19 +8,18 @@
       style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem"
     >
       <q-card
-        v-for="(match, index) in otherPersons"
+        v-for="(item, index) in otherPersons"
         :key="index"
         class="my-card"
-        @click="() => router.push({ path: '/start', query: { id: match.id } })"
       >
         <img
-          :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${match.photos[0]?.saved_file_name}`"
+          :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
           alt=".."
           style="object-fit: fill; width: 10rem; height: 15rem"
         />
         <div class="absolute-bottom text-subtitle2 text-start">
           <h6 class="text-white q-ma-sm text-weight-bold text-subtitle2">
-            {{ match.full_name }}, 24
+            {{ item.full_name }}, {{ calculateAge(item.dob) }}
           </h6>
         </div>
       </q-card>
@@ -95,6 +94,13 @@ const fetchMatchProfiles = async () => {
   }
 };
 
+function calculateAge(dob) {
+  const birthDate = new Date(dob);
+  const ageDifMs = Date.now() - birthDate.getTime();
+  const ageDate = new Date(ageDifMs);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
 // Initialize component
 onMounted(async () => {
   try {
@@ -107,9 +113,5 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="scss" scoped>
-.my-card {
-  width: 10rem;
-  height: 10rem;
-}
-</style>
+<style lang="scss" scoped></style>
+c

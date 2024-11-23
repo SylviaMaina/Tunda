@@ -40,7 +40,7 @@
     >
       <h6
         class="no-margin no-padding"
-        style="font-size: 11px; font-weight: 600; line-height: normal"
+        style="font-size: 13px; font-weight: 600; line-height: normal"
       >
         {{
           contact.sender_id.id === userData.user.id
@@ -51,7 +51,7 @@
 
       <h6
         class="no-margin text-green-5 no-padding"
-        style="font-size: 11px; font-weight: 600; line-height: normal"
+        style="font-size: 13px; font-weight: 600; line-height: normal"
       >
         online
       </h6>

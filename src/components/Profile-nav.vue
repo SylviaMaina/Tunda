@@ -29,7 +29,7 @@
     no-caps
     inline-label
     flat
-    class="text-grey-8"
+    class="text-grey-8 q-pa-sm"
     style="width: 100%; background-color: #eeeeee"
   >
     <q-route-tab

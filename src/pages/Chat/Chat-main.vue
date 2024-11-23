@@ -3,7 +3,7 @@
     style="
       width: 90%;
       margin: 0 auto;
-      height: 3rem;
+      height: 4rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -26,7 +26,7 @@
     </div>
     <q-icon color="dark" name="eva-message-circle-outline" size="20px" />
   </div>
-  <div class="q-px-sm">
+  <div class="q-pa-md">
     <q-input
       style="width: 100%"
       outlined
@@ -38,7 +38,7 @@
       </template>
     </q-input>
   </div>
-  <q-list>
+  <q-list class="q-pa-sm">
     <div v-for="contact in threads" :key="contact.id">
       <router-link
         :to="{ path: '/threads/view', query: { id: contact.id } }"
@@ -76,13 +76,9 @@
             <q-item-label caption>5 min ago</q-item-label>
             <q-item-label>
               <q-icon name="sell" class="q-pl-sm" color="dark" />
-              <q-chip color="primary" text-color="white" class="q-pa-xs">
-                5
-              </q-chip></q-item-label
-            >
-          </q-item-section>
-        </q-item></router-link
-      >
+            </q-item-label>
+          </q-item-section> </q-item
+      ></router-link>
     </div>
   </q-list>
 </template>

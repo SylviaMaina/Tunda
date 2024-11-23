@@ -43,10 +43,7 @@
       <q-linear-progress size="10px" value="0.5" class="q-mt-sm" rounded />
 
       <div class="q-py-md">
-        <h6
-          class="q-py-sm no-padding no-margin"
-          style="font-size: 22px; font-weight: 700"
-        >
+        <h6 class="q-py-sm no-margin" style="font-size: 22px; font-weight: 700">
           What are your interests
         </h6>
         <h6
