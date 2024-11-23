@@ -46,20 +46,25 @@
         justify-content: space-between;
       "
     >
-      <q-icon color="black" name="o_location_on" size="40px" />
+      <q-icon color="black" name="o_location_on" size="32px" />
       <div
         style="
-          width: 70%;
+          width: 80%;
           display: flex;
           flex-direction: column;
           align-items: start;
         "
       >
-        <h6 class="no-margin no-padding text-weight-bold">Location</h6>
+        <h6
+          class="no-margin no-padding text-weight-bold"
+          style="font-size: 18px"
+        >
+          Location
+        </h6>
         <h6 class="no-margin text-dark text-subtitle2">Nairobi,Kenya</h6>
       </div>
     </div>
-    <q-icon color="dark" name="o_notifications" size="40px" />
+    <q-icon color="dark" name="o_notifications" size="32px" />
   </div>
   <div
     style="
@@ -71,12 +76,12 @@
       justify-content: space-between;
     "
   >
-    <q-input style="width: 80%" outlined class="text-dark" placeholder="Search">
+    <q-input style="width: 90%" outlined class="text-dark" placeholder="Search">
       <template v-slot:prepend>
         <q-icon name="o_search" class="q-pl-sm" />
       </template>
     </q-input>
-    <q-icon color="black" name="o_tune" size="40px" @click="filter = true" />
+    <q-icon color="black" name="o_tune" size="36px" @click="filter = true" />
   </div>
   <div
     style="width: 90vw; margin: 0 auto; height: 60vh; position: relative"
@@ -198,125 +203,149 @@
       </q-fab>
     </div>
     <q-dialog v-model="filter" position="bottom">
-      <q-card style="width: 90%; height: 70%; margin: 0 auto" class="q-px-sm">
-        <div
-          style="
-            width: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          "
-        >
-          <div>
-            <h6 class="no-margin no-padding text-weight-bold">Filter</h6>
-          </div>
-        </div>
-        <div>
-          <h6 class="text-dark text-subtitle1 q-py-sm">Location</h6>
-          <q-input
-            style="width: 100%"
-            outlined
-            class="text-dark"
-            placeholder="Search"
-            v-model="location"
+      <q-card
+        style="
+          width: 90%;
+          height: 80%;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          border: 1px solid blue;
+        "
+        class="q-px-sm"
+      >
+        <div style="height: 60%">
+          <div
+            style="
+              width: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
           >
-            <template v-slot:prepend>
-              <q-icon name="o_search" class="q-pl-sm" />
-            </template>
-          </q-input>
-        </div>
-        <div style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem">
-          <q-badge color="black"> Distance (Km) </q-badge>
+            <div>
+              <h6 class="no-margin no-padding text-weight-bold">Filter</h6>
+            </div>
+          </div>
+          <div>
+            <h6 class="text-dark text-subtitle1 q-py-sm">Location</h6>
+            <q-input
+              style="width: 100%"
+              outlined
+              class="text-dark"
+              placeholder="Search"
+              v-model="location"
+            >
+              <template v-slot:prepend>
+                <q-icon name="o_search" class="q-pl-sm" />
+              </template>
+            </q-input>
+          </div>
+          <div
+            style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem"
+          >
+            <q-badge color="black"> Distance (Km) </q-badge>
 
-          <q-slider
-            v-model="distance"
-            :step="4"
-            label
-            :label-value="distance + ' ' + 'Km'"
-            label-always
-            switch-label-side
-            color="primary"
-            class="q-py-sm"
-          />
-        </div>
-        <div style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem">
-          <q-badge color="black"> Age </q-badge>
+            <q-slider
+              v-model="distance"
+              :step="4"
+              label
+              :label-value="distance + ' ' + 'Km'"
+              label-always
+              switch-label-side
+              color="primary"
+              class="q-py-sm"
+            />
+          </div>
+          <div
+            style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem"
+          >
+            <q-badge color="black"> Age </q-badge>
 
-          <q-range
-            v-model="age"
-            :min="0"
-            :max="100"
-            label
-            :label-value="age + ' ' + 'years'"
-            label-always
-            switch-label-side
-            color="primary"
-            class="q-py-sm"
-          />
-        </div>
-        <div>
-          <h6 class="text-weight-bold text-subtitle1 q-py-sm">Interested In</h6>
-          <div class="q-gutter-lg row flex-center">
-            <q-btn-toggle
-              v-model="gender"
-              no-caps
-              flat
-              style="
-                border: 1px solid gray;
-                width: 6rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 2.5rem;
-              "
-              toggle-color="primary"
-              :options="[{ slot: 'one', value: 'female' }]"
-            >
-              <template v-slot:one>
-                <q-icon size="26px" name="female" color="primary" /> </template
-            ></q-btn-toggle>
-            <q-btn-toggle
-              v-model="gender"
-              no-caps
-              flat
-              style="
-                border: 1px solid gray;
-                width: 6rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 2.5rem;
-              "
-              toggle-color="primary"
-              :options="[{ slot: 'two', value: 'male' }]"
-            >
-              <template v-slot:two>
-                <q-icon size="26px" name="male" color="primary" /> </template
-            ></q-btn-toggle>
-            <q-btn-toggle
-              v-model="gender"
-              no-caps
-              flat
-              style="
-                border: 1px solid gray;
-                width: 6rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 2.5rem;
-              "
-              toggle-color="primary"
-              :options="[{ slot: 'three', value: 'all' }]"
-            >
-              <template v-slot:three>
-                <q-icon
-                  size="26px"
-                  name="o_radio_button_unchecked"
-                  color="primary"
-                /> </template
-            ></q-btn-toggle>
+            <q-range
+              v-model="age"
+              :min="0"
+              :max="100"
+              label
+              :label-value="age + ' ' + 'years'"
+              label-always
+              switch-label-side
+              color="primary"
+              class="q-py-sm"
+            />
+          </div>
+          <div>
+            <h6 class="text-weight-bold text-subtitle1 q-py-sm">
+              Interested In
+            </h6>
+            <div class="q-gutter-lg row flex-center">
+              <q-btn-toggle
+                v-model="gender"
+                no-caps
+                flat
+                style="
+                  border: 1px solid gray;
+                  width: 6rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 2.5rem;
+                "
+                toggle-color="primary"
+                :options="[{ slot: 'one', value: 'female' }]"
+              >
+                <template v-slot:one>
+                  <q-icon
+                    size="26px"
+                    name="female"
+                    color="primary"
+                  /> </template
+              ></q-btn-toggle>
+              <q-btn-toggle
+                v-model="gender"
+                no-caps
+                flat
+                style="
+                  border: 1px solid gray;
+                  width: 6rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 2.5rem;
+                "
+                toggle-color="primary"
+                :options="[{ slot: 'two', value: 'male' }]"
+              >
+                <template v-slot:two>
+                  <q-icon size="26px" name="male" color="primary" /> </template
+              ></q-btn-toggle>
+              <q-btn-toggle
+                v-model="gender"
+                no-caps
+                flat
+                style="
+                  border: 1px solid gray;
+                  width: 6rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 2.5rem;
+                "
+                toggle-color="primary"
+                :options="[{ slot: 'three', value: 'all' }]"
+              >
+                <template v-slot:three>
+                  <q-icon
+                    size="26px"
+                    name="o_radio_button_unchecked"
+                    color="primary"
+                  /> </template
+              ></q-btn-toggle>
+            </div>
           </div>
         </div>
+
         <div
           style="display: flex; justify-content: space-between; width: 100%"
           class="q-my-lg"
@@ -358,125 +387,146 @@
       Come back again to see all new people to match with
     </h6>
     <q-dialog v-model="filter" position="bottom">
-      <q-card style="width: 90%; height: 70%; margin: 0 auto" class="q-pa-md">
+      <q-card
+        style="
+          width: 90%;
+          height: 80vh;
+          margin: 0 auto;
+          display: flex;
+          padding: 10px;
+          flex-direction: column;
+          justify-content: space-between;
+        "
+        class="q-px-sm"
+      >
         <div
           style="
-            width: 50%;
+            height: 50vh;
+            width: 90vw;
+            margin: 0 auto;
             display: flex;
             align-items: center;
+            flex-direction: column;
             justify-content: space-between;
           "
         >
-          <div>
-            <h6 class="no-margin no-padding text-weight-bold">Filter</h6>
+          <div style="width: 100%; margin: 0 auto">
+            <h6 class="no-margin no-padding text-weight-bold text-left">
+              Filter
+            </h6>
+            <h6 class="text-dark text-subtitle1 q-py-sm">Location</h6>
+            <q-input
+              style="width: 100%"
+              outlined
+              class="text-dark"
+              placeholder="Search"
+              v-model="location"
+            >
+              <template v-slot:prepend>
+                <q-icon name="o_search" class="q-pl-sm" />
+              </template>
+            </q-input>
+          </div>
+          <div style="width: 100%; margin: 0 auto">
+            <q-badge color="black"> Distance (Km) </q-badge>
+
+            <q-slider
+              v-model="distance"
+              :step="4"
+              label
+              :label-value="distance + ' ' + 'Km'"
+              label-always
+              switch-label-side
+              color="primary"
+              class="q-py-sm"
+            />
+          </div>
+          <div style="width: 100%; margin: 0 auto">
+            <q-badge color="black"> Age </q-badge>
+
+            <q-range
+              v-model="age"
+              :min="0"
+              :max="100"
+              label
+              :label-value="age + ' ' + 'years'"
+              label-always
+              switch-label-side
+              color="primary"
+              class="q-py-sm"
+            />
+          </div>
+          <div style="width: 100%; margin: 0 auto">
+            <h6 class="text-weight-bold text-subtitle1 q-py-sm">
+              Interested In
+            </h6>
+            <div class="q-gutter-lg row flex-center">
+              <q-btn-toggle
+                v-model="gender"
+                no-caps
+                flat
+                style="
+                  border: 1px solid gray;
+                  width: 6rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 2.5rem;
+                "
+                toggle-color="primary"
+                :options="[{ slot: 'one', value: 'female' }]"
+              >
+                <template v-slot:one>
+                  <q-icon
+                    size="26px"
+                    name="female"
+                    color="primary"
+                  /> </template
+              ></q-btn-toggle>
+              <q-btn-toggle
+                v-model="gender"
+                no-caps
+                flat
+                style="
+                  border: 1px solid gray;
+                  width: 6rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 2.5rem;
+                "
+                toggle-color="primary"
+                :options="[{ slot: 'two', value: 'male' }]"
+              >
+                <template v-slot:two>
+                  <q-icon size="26px" name="male" color="primary" /> </template
+              ></q-btn-toggle>
+              <q-btn-toggle
+                v-model="gender"
+                no-caps
+                flat
+                style="
+                  border: 1px solid gray;
+                  width: 6rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 2.5rem;
+                "
+                toggle-color="primary"
+                :options="[{ slot: 'three', value: 'all' }]"
+              >
+                <template v-slot:three>
+                  <q-icon
+                    size="26px"
+                    name="o_radio_button_unchecked"
+                    color="primary"
+                  /> </template
+              ></q-btn-toggle>
+            </div>
           </div>
         </div>
-        <div>
-          <h6 class="text-dark text-subtitle1 q-py-sm">Location</h6>
-          <q-input
-            style="width: 100%"
-            outlined
-            class="text-dark"
-            placeholder="Search"
-            v-model="location"
-          >
-            <template v-slot:prepend>
-              <q-icon name="o_search" class="q-pl-sm" />
-            </template>
-          </q-input>
-        </div>
-        <div style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem">
-          <q-badge color="black"> Distance (Km) </q-badge>
 
-          <q-slider
-            v-model="distance"
-            :step="4"
-            label
-            :label-value="distance + ' ' + 'Km'"
-            label-always
-            switch-label-side
-            color="primary"
-            class="q-py-sm"
-          />
-        </div>
-        <div style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem">
-          <q-badge color="black"> Age </q-badge>
-
-          <q-range
-            v-model="age"
-            :min="0"
-            :max="100"
-            label
-            :label-value="age + ' ' + 'years'"
-            label-always
-            switch-label-side
-            color="primary"
-            class="q-py-sm"
-          />
-        </div>
-        <div>
-          <h6 class="text-weight-bold text-subtitle1 q-py-sm">Interested In</h6>
-          <div class="q-gutter-lg row flex-center">
-            <q-btn-toggle
-              v-model="gender"
-              no-caps
-              flat
-              style="
-                border: 1px solid gray;
-                width: 6rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 2.5rem;
-              "
-              toggle-color="primary"
-              :options="[{ slot: 'one', value: 'female' }]"
-            >
-              <template v-slot:one>
-                <q-icon size="26px" name="female" color="primary" /> </template
-            ></q-btn-toggle>
-            <q-btn-toggle
-              v-model="gender"
-              no-caps
-              flat
-              style="
-                border: 1px solid gray;
-                width: 6rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 2.5rem;
-              "
-              toggle-color="primary"
-              :options="[{ slot: 'two', value: 'male' }]"
-            >
-              <template v-slot:two>
-                <q-icon size="26px" name="male" color="primary" /> </template
-            ></q-btn-toggle>
-            <q-btn-toggle
-              v-model="gender"
-              no-caps
-              flat
-              style="
-                border: 1px solid gray;
-                width: 6rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 2.5rem;
-              "
-              toggle-color="primary"
-              :options="[{ slot: 'three', value: 'all' }]"
-            >
-              <template v-slot:three>
-                <q-icon
-                  size="26px"
-                  name="o_radio_button_unchecked"
-                  color="primary"
-                /> </template
-            ></q-btn-toggle>
-          </div>
-        </div>
         <div
           style="display: flex; justify-content: space-between; width: 100%"
           class="q-my-lg"
