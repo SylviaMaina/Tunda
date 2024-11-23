@@ -88,7 +88,7 @@
       </q-form>
     </div>
     <div>
-      <h6 class="text-subtitle2 flex flex-center">
+      <h6 class="text-subtitle2 flex flex-center q-my-lg">
         Don't have an account?<span
           class="q-ml-sm text-weight-bold text-subtitle2"
           ><router-link to="/signup" style="text-decoration: none; color: black"
