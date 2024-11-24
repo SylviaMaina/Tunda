@@ -101,9 +101,6 @@ const options = [
   margin-top: 1rem;
 }
 .body {
-  height: 80vh;
-  width: 90vw;
-  margin: 0 auto;
   padding: 0.2rem;
   display: flex;
   flex-direction: column;

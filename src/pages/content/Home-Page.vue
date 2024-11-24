@@ -1,4 +1,4 @@
-<template style="width: screen; height: 100vh">
+<template>
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
@@ -84,7 +84,7 @@
     <q-icon color="black" name="o_tune" size="36px" @click="filter = true" />
   </div>
   <div
-    style="width: 90vw; margin: 0 auto; height: 60vh; position: relative"
+    style="width: 90vw; margin: 0 auto; height: 32rem; position: relative"
     v-if="info?.length > 0 && info[0].photos && info[0].photos?.length > 0"
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
@@ -390,7 +390,7 @@
       <q-card
         style="
           width: 90%;
-          height: 80vh;
+          height: 45rem;
           margin: 0 auto;
           display: flex;
           padding: 10px;
@@ -401,8 +401,9 @@
       >
         <div
           style="
-            height: 50vh;
-            width: 90vw;
+            height: 60%;
+            width: 90%;
+            padding-top: 1rem;
             margin: 0 auto;
             display: flex;
             align-items: center;

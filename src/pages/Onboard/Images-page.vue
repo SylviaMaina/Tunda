@@ -133,7 +133,7 @@ async function uploadFiles() {
 
 <style lang="scss" scoped>
 .body {
-  height: 88vh;
+  height: 45rem;
   width: 90vw;
   margin: 0 auto;
   padding: 0.2rem;

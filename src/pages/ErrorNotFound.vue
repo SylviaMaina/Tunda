@@ -6,7 +6,7 @@
       style="opacity: 0.2"
     />
     <div class="absolute">
-      <h6 style="font-size: 4vh; font-weight: 700" class="q-pa-md">Oops!</h6>
+      <h6 style="font-size: 2rem; font-weight: 700" class="q-pa-md">Oops!</h6>
 
       <h6 class="text-caption text-dark q-pa-md">
         We cannot find the page you are looking for

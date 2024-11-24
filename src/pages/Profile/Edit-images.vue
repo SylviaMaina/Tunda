@@ -225,7 +225,7 @@ const dismissError = () => {
 
 <style lang="scss" scoped>
 .body {
-  height: 80vh;
+  height: 42rem;
   width: 95vw;
   margin: 0 auto;
   padding: 0.2rem;
@@ -235,7 +235,7 @@ const dismissError = () => {
 }
 
 .gallery-container {
-  height: 78vh;
+  height: 40rem;
   margin: 0 auto;
   overflow-y: auto;
 }

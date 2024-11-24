@@ -137,8 +137,8 @@ const dismissError = () => {
 
 <style lang="scss" scoped>
 .body {
-  height: 75vh;
-  width: 90vw;
+  height: 40rem;
+  width: 95%;
   margin: 0 auto;
   padding: 0.2rem;
   display: flex;

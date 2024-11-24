@@ -39,7 +39,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/about/:userId",
+    path: "/about",
     component: () => import("pages/content/About-me.vue"),
     meta: { requiresAuth: true },
   },

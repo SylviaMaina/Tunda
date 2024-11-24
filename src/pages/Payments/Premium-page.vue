@@ -25,7 +25,7 @@
           width: 95%;
           margin: 0 auto;
           border: 1px solid grey;
-          height: 60vh;
+          height: 30rem;
           border-radius: 0.5rem;
           padding: 1rem;
         "
@@ -92,9 +92,7 @@
 
 <style lang="scss" scoped>
 .body {
-  height: 85vh;
-  width: 90vw;
-  margin: 0 auto;
+  height: 45rem;
   padding: 0.2rem;
   display: flex;
   flex-direction: column;

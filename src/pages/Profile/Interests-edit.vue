@@ -1,13 +1,13 @@
 <template>
   <div class="body" v-if="userData?.user">
-    <div class="" style="overflow-y: auto; height: 80vh">
+    <div class="" style="overflow-y: auto; height: 42rem">
       <div>
         <h6 class="q-py-sm" style="font-size: 18px; font-weight: 600">
           Your Interests
         </h6>
         <div
           style="
-            height: 20vh;
+            height: 10rem;
             display: grid;
             grid-template-columns: repeat(3, 7.8rem);
           "
@@ -149,8 +149,8 @@ const updateInterests = async () => {
 
 <style lang="scss" scoped>
 .body {
-  height: 75vh;
-  width: 95vw;
+  height: 40rem;
+  width: 95%;
   margin: 0 auto;
   padding: 0.2rem;
   display: flex;

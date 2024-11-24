@@ -1,4 +1,4 @@
-<template style="width: screen; height: 100vh">
+<template>
   <q-banner
     v-if="error"
     class="bg-negative text-red q-ma-sm"
@@ -27,118 +27,124 @@
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
   </q-banner>
-  <div
-    style="
-      width: 90%;
-      margin: 0 auto;
-      height: 5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    "
-  >
+  <div class="q-pa-sm q-mx-auto full-height" style="height: 100%">
     <div
       style="
-        width: 50%;
+        width: 90%;
+        margin: 0 auto;
         height: 5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
       "
     >
-      <q-icon color="black" name="o_location_on" size="40px" />
       <div
         style="
-          width: 70%;
+          width: 50%;
+          height: 5rem;
           display: flex;
-          flex-direction: column;
-          align-items: start;
+          align-items: center;
+          justify-content: space-between;
         "
       >
-        <h6 class="no-margin no-padding text-weight-bold">Location</h6>
-        <h6 class="no-margin text-dark text-subtitle2">Nairobi,Kenya</h6>
+        <q-icon color="black" name="o_location_on" size="40px" />
+        <div
+          style="
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+          "
+        >
+          <h6 class="no-margin no-padding text-weight-bold">Location</h6>
+          <h6 class="no-margin text-dark text-subtitle2">Nairobi,Kenya</h6>
+        </div>
       </div>
+      <q-icon color="dark" name="o_notifications" size="40px" />
     </div>
-    <q-icon color="dark" name="o_notifications" size="40px" />
-  </div>
-  <div
-    style="
-      width: 90%;
-      margin: 0 auto;
-      height: 5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    "
-  >
-    <q-input style="width: 80%" outlined class="text-dark" placeholder="Search">
-      <template v-slot:prepend>
-        <q-icon name="o_search" class="q-pl-sm" />
-      </template>
-    </q-input>
-    <q-icon color="black" name="o_tune" size="40px" @click="filter = true" />
-  </div>
-  <div style="width: 90vw; margin: 0 auto; height: 60vh; position: relative">
-    <img
-      :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${info?.photos[0].saved_file_name}`"
-      alt=".."
-      style="
-        height: 100%;
-        width: 100%;
-        margin: 0 auto;
-        object-fit: cover;
-        border-radius: 2rem;
-      "
-    />
     <div
       style="
-        position: absolute;
-        bottom: 8%;
-        width: 100%;
+        width: 90%;
+        margin: 0 auto;
         height: 5rem;
         display: flex;
         align-items: center;
-        justify-content: space-evenly;
+        justify-content: space-between;
       "
-      v-if="info"
     >
+      <q-input
+        style="width: 80%"
+        outlined
+        class="text-dark"
+        placeholder="Search"
+      >
+        <template v-slot:prepend>
+          <q-icon name="o_search" class="q-pl-sm" />
+        </template>
+      </q-input>
+      <q-icon color="black" name="o_tune" size="40px" @click="filter = true" />
+    </div>
+    <div style="width: 90vw; margin: 0 auto; height: 32rem; position: relative">
+      <img
+        :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${info?.photos[0].saved_file_name}`"
+        alt=".."
+        style="
+          height: 100%;
+          width: 100%;
+          margin: 0 auto;
+          object-fit: cover;
+          border-radius: 2rem;
+        "
+      />
       <div
         style="
-          width: 90%;
+          position: absolute;
+          bottom: 8%;
+          width: 100%;
           height: 5rem;
-          margin-left: 0.5rem;
-          margin-bottom: 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-evenly;
         "
+        v-if="info"
       >
-        <div class="row flex-center justify-between">
-          <h6 class="text-white q-ma-sm text-weight-bold">
-            {{ info.full_name }}, {{ calculateAge(info?.dob) }}
-          </h6>
-        </div>
-
         <div
-          class="q-gutter-sm"
           style="
-            width: 70%;
-            display: grid;
-            grid-template-columns: repeat(3, 6.8rem);
+            width: 90%;
+            height: 5rem;
+            margin-left: 0.5rem;
+            margin-bottom: 3rem;
           "
         >
-          <div v-for="category in info.interests" :key="category.name">
-            <div
-              v-for="interest in category.interests.slice(0, 1)"
-              :key="interest.label"
-            >
-              <q-badge
-                transparent
-                color="info"
-                class="q-pa-sm ellipsis-2-lines"
-                :label="interest.label"
-              />
+          <div class="row flex-center justify-between">
+            <h6 class="text-white q-ma-sm text-weight-bold">
+              {{ info.full_name }}, {{ calculateAge(info?.dob) }}
+            </h6>
+          </div>
+
+          <div
+            class="q-gutter-sm"
+            style="
+              width: 70%;
+              display: grid;
+              grid-template-columns: repeat(3, 6.8rem);
+            "
+          >
+            <div v-for="category in info.interests" :key="category.name">
+              <div
+                v-for="interest in category.interests.slice(0, 1)"
+                :key="interest.label"
+              >
+                <q-badge
+                  transparent
+                  color="info"
+                  class="q-pa-sm ellipsis-2-lines"
+                  :label="interest.label"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <router-link :to="`/about/${info.id}`" style="text-decoration: none">
+
           <div
             style="
               width: 2rem;
@@ -152,38 +158,43 @@
               position: absolute;
               background: #ffffff29;
             "
+            @click="
+              () => {
+                router.push({ path: 'about/', query: { id: info.id } });
+              }
+            "
           >
             <q-icon name="more_vert" color="white" size="1.2rem" />
           </div>
-        </router-link>
+        </div>
       </div>
-    </div>
 
-    <div
-      style="
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        bottom: -2rem;
-        position: absolute;
-      "
-    >
-      <q-fab
-        icon="message"
-        color="primary"
-        text-color="white"
-        round
-        size="20px"
-        class="q-mx-sm"
-        @click="
-          () => {
-            router.push({ path: '/threads/view', query: { id: info.id } });
-          }
+      <div
+        style="
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          bottom: -2rem;
+          position: absolute;
         "
       >
-      </q-fab>
+        <q-fab
+          icon="message"
+          color="primary"
+          text-color="white"
+          round
+          size="20px"
+          class="q-mx-sm"
+          @click="
+            () => {
+              router.push({ path: '/threads/view', query: { id: info.id } });
+            }
+          "
+        >
+        </q-fab>
+      </div>
     </div>
   </div>
   <div v-if="info?.length === 0">

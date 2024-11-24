@@ -53,7 +53,7 @@
           Meet people with similar interests
         </h6>
       </div>
-      <div style="overflow-y: auto; overflow-x: hidden; height: 58vh">
+      <div style="overflow-y: auto; overflow-x: hidden; height: 30rem">
         <div class="q-my-sm" v-for="item in interest" :key="item.name">
           <div>
             <h6 class="text-weight-bold text-subtitle1 q-py-sm">
@@ -168,7 +168,7 @@ const dismissError = () => {
 
 <style lang="scss" scoped>
 .body {
-  height: 88vh;
+  height: 45rem;
   width: 90vw;
   margin: 0 auto;
   padding: 0.2rem;

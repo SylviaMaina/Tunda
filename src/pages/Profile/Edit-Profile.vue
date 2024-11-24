@@ -111,7 +111,7 @@ const EditProfile = async () => {
 
 <style lang="scss" scoped>
 .body {
-  height: 80vh;
+  height: 42rem;
   width: 90vw;
   margin: 0 auto;
   padding: 0.2rem;

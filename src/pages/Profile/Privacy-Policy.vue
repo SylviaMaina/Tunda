@@ -29,7 +29,7 @@
       </h6>
     </div>
     <h6 class="text-primary text-h5 q-py-sm">Privacy Policy</h6>
-    <q-scroll-area style="height: 65vh">
+    <q-scroll-area style="height: 35rem">
       <div v-for="n in 100" :key="n" class="q-py-xs">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua.

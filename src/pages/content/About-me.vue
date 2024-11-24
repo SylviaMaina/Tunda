@@ -1,5 +1,5 @@
-<template style="width: screen; height: 100vh">
-  <div class="q-ma-sm" style="width: 95%; margin: 0 auto">
+<template>
+  <div class="q-ma-sm q-pa-sm" style="width: 95%; margin: 0 auto">
     <div
       style="
         width: 100%;
@@ -65,23 +65,24 @@
         {{ user?.bio }}
       </h6>
     </div>
-    <div
-      style="width: 100%; height: 78vh; margin: 0 auto"
-      class="q-pa-sm overflow-auto"
-      v-if="user"
-    >
+    <div class="q-pa-sm overflow-auto" v-if="user">
       <div
         style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem"
       >
         <q-card
           v-for="(match, index) in user.photos"
           :key="index"
-          class="my-card"
+          style="
+            object-fit: cover;
+            width: 8rem;
+            height: 10rem;
+            border-radius: 1rem;
+          "
         >
           <img
             :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${match?.saved_file_name}`"
             alt=".."
-            style="object-fit: cover; width: 11rem; height: 15rem"
+            style="object-fit: cover; width: 8rem; height: 10rem"
           />
         </q-card>
       </div>

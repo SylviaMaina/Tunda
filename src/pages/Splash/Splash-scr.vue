@@ -15,7 +15,6 @@
 
 <style lang="scss" scoped>
 .land {
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

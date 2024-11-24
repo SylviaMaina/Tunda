@@ -1,6 +1,6 @@
 <template>
   <div
-    style="width: 90%; height: 78vh; margin: 0 auto"
+    style="width: 90%; margin: 0 auto"
     class="q-pa-sm overflow-auto"
     v-if="otherPersons?.length > 0"
   >
@@ -10,12 +10,22 @@
       <q-card
         v-for="(item, index) in otherPersons"
         :key="index"
-        class="my-card"
+        @click="
+          () => {
+            router.push({ path: '/start', query: { id: item.id } });
+          }
+        "
+        style="
+          object-fit: fill;
+          width: 8rem;
+          height: 10rem;
+          border-radius: 1rem;
+        "
       >
         <img
           :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
           alt=".."
-          style="object-fit: fill; width: 10rem; height: 15rem"
+          style="object-fit: fill; width: 8rem; height: 10rem"
         />
         <div class="absolute-bottom text-subtitle2 text-start">
           <h6 class="text-white q-ma-sm text-weight-bold text-subtitle2">
@@ -114,4 +124,3 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped></style>
-c

@@ -57,10 +57,18 @@
       </h6>
     </div>
   </div>
-
-  <!-- Message area -->
-  <div class="q-pa-md row justify-center">
-    <div style="width: 90%; height: 75vh; overflow-y: auto; overflow-x: hidden">
+  <div
+    style="
+      height: 46rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: column;
+    "
+    class="q-pa-sm"
+  >
+    <!-- Message area -->
+    <div style="width: 90%; overflow-y: auto; overflow-x: hidden">
       <q-chat-message
         v-for="msg in messages"
         :key="msg.id"
@@ -73,39 +81,51 @@
       <!-- Show typing indicator if the other user is typing -->
       <div v-if="isTyping" class="text-grey-6 text-caption">Typing...</div>
     </div>
+
+    <!-- Input area -->
+    <div
+      style="
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      "
+    >
+      <q-input
+        outlined
+        class="full-width"
+        v-model="newMessage"
+        placeholder="Type a message"
+        @focus="handleTyping"
+        @keydown.enter="sendMessage"
+        ><template v-slot:prepend
+          ><q-btn
+            icon="attach_file"
+            flat
+            dense
+            @click="triggerFileInput"
+          ></q-btn>
+
+          <q-input
+            type="file"
+            v-model="fileInput"
+            @change="handleFileChange"
+            style="display: none"
+            multiple
+          />
+        </template>
+        <q-btn
+          icon="send"
+          color="primary"
+          flat
+          dense
+          @click="sendMessage"
+        ></q-btn
+      ></q-input>
+    </div>
   </div>
 
-  <!-- Input area -->
-  <div
-    style="
-      width: 90vw;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    "
-  >
-    <q-input
-      outlined
-      class="full-width"
-      v-model="newMessage"
-      placeholder="Type a message"
-      @focus="handleTyping"
-      @keydown.enter="sendMessage"
-      ><template v-slot:prepend
-        ><q-btn icon="attach_file" flat dense @click="triggerFileInput"></q-btn>
-
-        <q-input
-          type="file"
-          v-model="fileInput"
-          @change="handleFileChange"
-          style="display: none"
-          multiple
-        />
-      </template>
-      <q-btn icon="send" color="primary" flat dense @click="sendMessage"></q-btn
-    ></q-input>
-  </div>
   <div v-if="previews?.length > 0" class="file-previews">
     <div v-for="(file, index) in previews" :key="index" class="file-preview">
       <q-avatar>

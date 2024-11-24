@@ -32,10 +32,6 @@
 <script setup></script>
 
 <style lang="scss" scoped>
-.body {
-  max-height: 100vh;
-}
-
 .profile {
   width: 24rem;
   height: 20rem;

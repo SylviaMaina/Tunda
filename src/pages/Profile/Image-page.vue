@@ -28,14 +28,14 @@
       v-model="slide"
       ref="carousel"
       infinite
-      style="height: 70vh; position: relative"
+      style="height: 38rem; position: relative"
     >
       <q-carousel-slide
         v-for="(item, index) in info"
         :key="index"
         :name="index"
         :img-src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.saved_file_name}`"
-        style="height: 70vh"
+        style="height: 38rem"
         alt=".."
       />
     </q-carousel>

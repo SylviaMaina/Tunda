@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 90vh; width: 100vw" v-if="user">
+  <div v-if="user">
     <div
       style="
         width: 90%;
@@ -129,7 +129,7 @@
         border-radius: 0.5rem;
         margin: auto;
         overflow: auto;
-        height: 48vh;
+        height: 28rem;
         margin-top: 0.5rem;
         margin-bottom: 1rem;
       "
