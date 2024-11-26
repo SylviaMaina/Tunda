@@ -51,10 +51,37 @@
 
         <q-input outlined type="email" label="Email" v-model="email" />
         <!-- Country Dropdown -->
-
+         <div class="phone-number-input-container">
+          <q-select
+              borderless
+              dense
+              class=""
+              v-model="selectedCountry"
+              :options="countryOptions"
+              @update:model-value="onCountryChange"
+              option-value="value"
+            >
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                  <div class="">
+                    <img :src="`https://flagcdn.com/${scope.opt.value?.toLowerCase() }.svg`"
+                    style="max-width: 30px;">
+                  </div>
+                  <q-item-section class="address-location-options">
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.value }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+            </template>
+            <template v-slot:selected-item="scope">
+              <div class="">
+                <img :src="`https://flagcdn.com/${scope.opt.value?.toLowerCase() }.svg`"
+                style="max-width: 44px; height: 40px; object-fit: cover;">
+              </div>
+           </template>
+        </q-select>
         <q-input
           borderless
-          style="border: 0.05rem solid darkgray; border-radius: 0.2rem"
           label="Mobile Number"
           type="tel"
           v-model="phone_number"
@@ -62,21 +89,8 @@
           class="q-pa-none"
           placeholder="Enter phone number"
         >
-          <!-- Prepended Q-Select with no padding or margin -->
-          <template v-slot:prepend>
-            <q-select
-              borderless
-              dense
-              v-model="selectedCountry"
-              :options="countryOptions"
-              style="width: 4rem"
-              class="q-pa-none q-ma-none"
-              @update:model-value="onCountryChange"
-              option-value="code"
-              option-label="label"
-            />
-          </template>
         </q-input>
+      </div>
 
         <q-select outlined :options="options" label="Gender" v-model="gender" />
 
@@ -152,13 +166,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { Geolocation } from "@capacitor/geolocation";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { Notify } from "quasar";
 import config from "src/config";
+
 
 const options = ["female", "male"];
 const email = ref("");
@@ -180,7 +195,7 @@ const countryOptions = [
   { label: "South Sudan", value: "SS" },
   { label: "United States", value: "US" },
 ];
-const selectedCountry = ref("KE");
+const selectedCountry = ref({ label: "Kenya", value: "KE" });
 const error = ref(null);
 
 const getLocation = async () => {
@@ -200,7 +215,8 @@ const getLocation = async () => {
 };
 
 const phoneMask = computed(() => {
-  switch (selectedCountry.value) {
+
+  switch (selectedCountry.value?.value) {
     case "KE": // Kenya
       return "+254 (###) ###-###";
     case "UG": // Uganda
@@ -219,6 +235,7 @@ const phoneMask = computed(() => {
 });
 
 const onCountryChange = (countryCode) => {
+  phone_number.value = "";
   const phoneNumber = parsePhoneNumberFromString(
     phone_number.value,
     countryCode
@@ -288,5 +305,13 @@ onMounted(getLocation);
 }
 :deep(.q-placeholder) {
   font-size: 13px;
+}
+.phone-number-input-container {
+  border: 0.05rem solid darkgray;
+  border-radius: 0.2rem;
+  display: flex;
+}
+.phone-number-input-container:focus-within {
+  border:2px  solid $primary;
 }
 </style>
