@@ -75,6 +75,7 @@
 import AuthSession from "app/Storage/AuthSession";
 import axios from "axios";
 import { Loading } from "quasar";
+import config from "src/config";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -109,7 +110,7 @@ async function uploadFiles() {
     const token = AuthSession.getToken();
 
     const res = await axios.patch(
-      "http://212.47.72.98:3001/api/v1/profile/photos/",
+      `${config.API_BASE_URL}/profile/photos/`,
       formData,
       {
         headers: {

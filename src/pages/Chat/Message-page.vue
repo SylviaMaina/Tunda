@@ -17,7 +17,7 @@
 
     <q-avatar size="2rem" class="q-ml-sm">
       <img
-        :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${
+        :src="`${config.API_BASE_URL}/media/file/?file_path=${
           contact.sender_id.id === userData.user.id
             ? contact.receiver_id?.profile_photo
             : contact.sender_id?.profile_photo
@@ -145,6 +145,7 @@ import { useUserStore } from "src/stores/useUserStore";
 import AuthSession from "app/Storage/AuthSession";
 import axios from "axios";
 import { useRoute } from "vue-router";
+import config from "src/config";
 
 const $q = useQuasar();
 const previews = ref([]);
@@ -173,7 +174,7 @@ const triggerFileInput = () => {
 // Load all threads for the user
 const loadThreads = async () => {
   try {
-    const response = await apiClient.get("messages/threads/", {
+    const response = await apiClient.get("/messages/threads/", {
       headers: { Authorization: token },
     });
     const results = response.data.results;
@@ -209,7 +210,7 @@ const fetchMatch = async () => {
   }
 
   try {
-    const response = await apiClient.get("matches/");
+    const response = await apiClient.get("/matches/");
     if (response.data.success) {
       const matches = response.data.results.docs;
       const matchingMatch = matches.find(
@@ -313,7 +314,7 @@ const sendMessage = async () => {
 
   try {
     const response = await axios.post(
-      "http://212.47.72.98:3001/api/v1/messages/",
+      `${config.API_BASE_URL}/messages/`,
       formData,
       {
         headers: {
@@ -334,7 +335,7 @@ const sendMessage = async () => {
 // Load the existing messages
 const loadMessages = async () => {
   try {
-    const response = await apiClient.get("messages/", {
+    const response = await apiClient.get("/messages/", {
       headers: { Authorization: token },
     });
     messages.value = response.data.results.docs;

@@ -129,7 +129,7 @@ const error = ref(null);
 // Load all notifs for the user
 const loadNotifs = async () => {
   try {
-    const response = await apiClient.get("notifications/", {
+    const response = await apiClient.get("/notifications/", {
       headers: { Authorization: token },
     });
     const results = response.data.results;
@@ -146,7 +146,7 @@ const loadNotifs = async () => {
 // open a notification
 const OpenNotif = async (id) => {
   try {
-    const response = await apiClient.patch("notifications/seen/", {
+    const response = await apiClient.patch("/notifications/seen/", {
       id: id,
     });
   } catch (error) {
@@ -156,7 +156,7 @@ const OpenNotif = async (id) => {
 
 const DeleteNotif = async (id) => {
   try {
-    const response = await apiClient.delete("notifications/", {
+    const response = await apiClient.delete("/notifications/", {
       id: id,
     });
   } catch (error) {

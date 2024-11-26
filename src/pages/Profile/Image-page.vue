@@ -34,7 +34,7 @@
         v-for="(item, index) in info"
         :key="index"
         :name="index"
-        :img-src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.saved_file_name}`"
+        :img-src="`${config.API_BASE_URL}/media/file/?file_path=${item.saved_file_name}`"
         style="height: 38rem"
         alt=".."
       />
@@ -82,6 +82,7 @@
 <script setup>
 import { apiClient } from "app/Storage/api";
 import { Notify } from "quasar";
+import config from "src/config";
 import { onMounted, ref } from "vue";
 
 const info = ref(null);
@@ -90,7 +91,7 @@ const slide = ref(1);
 
 const fetchInterests = async () => {
   try {
-    const response = await apiClient.get("media/");
+    const response = await apiClient.get("/media/");
     if (response.data.success) {
       // Set info to the docs array from the response data
       info.value = response.data.results.docs;

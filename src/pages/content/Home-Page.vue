@@ -90,7 +90,7 @@
     @touchend="handleTouchEnd"
   >
     <img
-      :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${info[0].photos[0].saved_file_name}`"
+      :src="`${config.API_BASE_URL}/media/file/?file_path=${info[0].photos[0].saved_file_name}`"
       alt=".."
       style="
         height: 100%;
@@ -560,6 +560,7 @@ import { onMounted, ref } from "vue";
 import { Loading, useQuasar } from "quasar";
 import { apiClient } from "app/Storage/api";
 import AuthSession from "app/Storage/AuthSession";
+import config from "src/config";
 
 const filter = ref(false);
 const distance = ref(0);
@@ -683,7 +684,7 @@ const showNotif = async () => {
   try {
     const matchId = info.value[currentIndex.value]?.id;
     if (!matchId) throw new Error("Match ID not found");
-    const response = await apiClient.post("matches/request/", {
+    const response = await apiClient.post("/matches/request/", {
       person_to_match: matchId,
     });
     if (response.data.success) {
@@ -711,7 +712,7 @@ const showLike = async () => {
   const matchId = info.value[currentIndex.value]?.id;
 
   try {
-    const response = await apiClient.post("matches/request/", {
+    const response = await apiClient.post("/matches/request/", {
       person_to_match: matchId,
     });
     if (response.data.success) {

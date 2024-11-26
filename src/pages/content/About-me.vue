@@ -80,7 +80,7 @@
           "
         >
           <img
-            :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${match?.saved_file_name}`"
+            :src="`${config.API_BASE_URL}/media/file/?file_path=${match?.saved_file_name}`"
             alt=".."
             style="object-fit: cover; width: 8rem; height: 10rem"
           />
@@ -125,6 +125,7 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import { apiClient } from "app/Storage/api";
+import config from "src/config";
 
 const $q = useQuasar();
 

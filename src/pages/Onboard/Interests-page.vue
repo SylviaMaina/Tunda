@@ -110,7 +110,7 @@ const router = useRouter();
 // Fetch interests from the API
 const fetchInterests = async () => {
   try {
-    const response = await apiClient.get("profile/selections/?type=interests");
+    const response = await apiClient.get("/profile/selections/?type=interests");
     if (response.data.success) {
       interest.value = response.data.results.map((item) => ({
         ...item,

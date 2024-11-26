@@ -48,7 +48,7 @@
           <q-item-section avatar>
             <q-avatar>
               <img
-                :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${
+                :src="`${config.API_BASE_URL}/media/file/?file_path=${
                   contact.sender_id.id === user?.id
                     ? contact.receiver_id?.profile_photo
                     : contact.sender_id?.profile_photo
@@ -86,6 +86,7 @@
 <script setup>
 import { apiClient } from "app/Storage/api";
 import AuthSession from "app/Storage/AuthSession";
+import config from "src/config";
 import { onMounted, ref } from "vue";
 
 const threads = ref([]);
@@ -101,7 +102,7 @@ const props = defineProps({
 // Load all threads for the user
 const loadThreads = async () => {
   try {
-    const response = await apiClient.get("messages/threads/", {
+    const response = await apiClient.get("/messages/threads/", {
       headers: { Authorization: token },
     });
     const results = response.data.results;

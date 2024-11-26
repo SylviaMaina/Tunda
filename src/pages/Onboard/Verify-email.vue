@@ -81,7 +81,7 @@ const userData = useUserStore();
 const Profession = async () => {
   Loading.show();
   try {
-    const res = await apiClient.patch("/profile/update/", {
+    const res = await apiClient.post("/users/verify/", {
       id: userData.user.id,
       confirmation_code: model.value,
     });

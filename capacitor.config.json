@@ -8,6 +8,13 @@
       "backgroundColor": "#ff6f61",
       "launchShowDuration": 3000,
       "launchAutoHide": true
+    },
+    "CapacitorHttp": {
+      "enabled": true
     }
+  },
+  "server": {
+    "cleartext": true,
+    "allowNavigation": ["212.47.72.98"]
   }
 }

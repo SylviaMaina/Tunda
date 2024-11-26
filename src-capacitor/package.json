@@ -5,12 +5,14 @@
   "author": "Sylvia Maina",
   "private": true,
   "dependencies": {
+    "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "^6.1.2",
     "@capacitor/app": "^6.0.0",
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^6.0.0",
     "@capacitor/core": "^6.0.0",
     "@capacitor/geolocation": "^6.0.2",
-    "@capacitor/splash-screen": "^6.0.3"
+    "@capacitor/splash-screen": "^6.0.3",
+    "vue-tel-input": "^9.2.0"
   }
 }

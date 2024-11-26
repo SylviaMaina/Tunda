@@ -103,11 +103,12 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { Loading, Notify } from "quasar";
-import axios from "axios";
 import { useRouter } from "vue-router";
 import AuthSession from "../../../Storage/AuthSession";
 import { useUserStore } from "src/stores/useUserStore";
 import { Geolocation } from "@capacitor/geolocation";
+import axios from "axios";
+import config from "src/config";
 
 const email = ref("");
 const password = ref("");
@@ -134,13 +135,10 @@ const getLocation = async () => {
 const HandleLogin = async () => {
   Loading.show();
   try {
-    const res = await axios.post(
-      "http://212.47.72.98:3001/api/v1/users/login/",
-      {
-        email: email.value,
-        password: password.value,
-      }
-    );
+    const res = await axios.post(`${config.API_BASE_URL}/users/login/`, {
+      email: email.value,
+      password: password.value,
+    });
     if (res.data.success) {
       Loading.hide();
       AuthSession.saveSession(res.data);
@@ -157,7 +155,7 @@ const HandleLogin = async () => {
     error.value =
       err.response?.data?.message?.en ||
       "Something went wrong, please try again or reach out to customer support";
-    console.error("Registration failed:", err);
+    console.error("Login failed:", error.value);
     Loading.hide();
   }
 };
@@ -179,7 +177,6 @@ h2 {
   color: #ff6f61;
 }
 .body {
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;

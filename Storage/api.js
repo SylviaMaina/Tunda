@@ -1,151 +1,134 @@
-import axios from "axios";
+import { Http } from "@capacitor-community/http";
+import config from "src/config";
 import { useRouter } from "vue-router";
-import authToken from "./AuthSession.js"; // Ensure this works with Quasar/Vue setup
 
 class ApiClient {
   constructor() {
-    this.client = this.getInstance();
-    this.router = useRouter(); // Use Vue Router for navigation
+    this.router = useRouter();
+    this.baseURL = config.API_BASE_URL;
   }
 
-  getClient() {
-    return this.client;
-  }
+  async request(method, url, data = {}, conf = {}) {
+    const fullUrl = `${this.baseURL}${url}`;
 
-  get(url, conf = {}) {
-    return this.client
-      .get(url, conf)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error));
-  }
+    const params = conf.params || {};
+    const requestData =
+      method === "POST" || method === "PUT" || method === "PATCH"
+        ? data || {}
+        : undefined;
 
-  delete(url, conf = {}) {
-    return this.client
-      .delete(url, conf)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error));
-  }
-
-  head(url, conf = {}) {
-    return this.client
-      .head(url, conf)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error));
-  }
-
-  options(url, conf = {}) {
-    return this.client
-      .options(url, conf)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error));
-  }
-
-  post(url, data = {}, conf = {}) {
-    if (data instanceof FormData) {
-      conf.headers = {
+    const options = {
+      url: fullUrl,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
         ...conf.headers,
-        "Content-Type": "multipart/form-data",
-      };
-    }
-    return this.client
-      .post(url, data, conf)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error));
-  }
-
-  put(url, data = {}, conf = {}) {
-    if (data instanceof FormData) {
-      conf.headers = {
-        ...conf.headers,
-        "Content-Type": "multipart/form-data",
-      };
-    }
-    return this.client
-      .put(url, data, conf)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error));
-  }
-
-  patch(url, data = {}, conf = {}) {
-    if (data instanceof FormData) {
-      conf.headers = {
-        ...conf.headers,
-        "Content-Type": "multipart/form-data",
-      };
-    }
-    return this.client
-      .patch(url, data, conf)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error));
-  }
-
-  getInstance() {
-    const client = axios.create({
-      baseURL: "http://212.47.72.98:3001/api/v1",
-    });
-
-    // Request interceptor
-    client.interceptors.request.use(
-      async (config) => {
-        const token = localStorage.getItem("tokenDataAuth");
-        if (token) {
-          // Set Authorization header directly with the token only, no "Bearer " prefix
-          config.headers["Authorization"] = token;
-        }
-        config.headers["Accept"] = "application/json";
-        config.headers["Content-Type"] = "application/json";
-        return config;
       },
-      (error) => {
-        console.error("Request Error:", error);
-        return Promise.reject(error);
-      }
-    );
+      params: params,
+      data: requestData,
+    };
 
-    // Response interceptor
-    client.interceptors.response.use(
-      (response) => {
-        return response;
-      },
-      async (error) => {
-        const originalRequest = error.config;
-        if (
-          error.config &&
-          error.response &&
-          error.response.status === 401 &&
-          !originalRequest._retry &&
-          !originalRequest.isRefreshing
-        ) {
-          originalRequest._retry = true;
-          originalRequest.isRefreshing = true;
-          try {
-            const response = await client.post("auth/account/token/refresh");
-            localStorage.setItem("tokenDataAuth", response.data.token);
-            localStorage.setItem("userIsLoggedIn", "true");
-            localStorage.setItem(
-              "userData",
-              JSON.stringify(response.data.data)
-            );
+    await this.attachTokenToRequest(options);
 
-            // Update the request header and retry
-            originalRequest.headers["Authorization"] = ` ${localStorage.getItem(
-              "tokenDataAuth"
-            )}`;
-            originalRequest.isRefreshing = false;
-            return client.request(originalRequest);
-          } catch (refreshError) {
-            // Handle refresh token failure
-            localStorage.clear();
-            this.router.push({ path: "/auth/login" });
-            return Promise.reject(refreshError);
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
-
-    return client;
+    try {
+      const response = await Http.request({ ...options, method });
+      return Promise.resolve(response);
+    } catch (error) {
+      console.error("HTTP Request Error: ", error);
+      return Promise.reject(error);
+    }
   }
+
+  // GET request
+  async get(url, conf = {}) {
+    return this.request("GET", url, {}, conf);
+  }
+
+  // POST request
+  async post(url, data = {}, conf = {}) {
+    return this.request("POST", url, data, conf);
+  }
+
+  // PUT request
+  async put(url, data = {}, conf = {}) {
+    return this.request("PUT", url, data, conf);
+  }
+
+  // PATCH request
+  async patch(url, data = {}, conf = {}) {
+    return this.request("PATCH", url, data, conf);
+  }
+
+  // DELETE request
+  async delete(url, conf = {}) {
+    return this.request("DELETE", url, {}, conf);
+  }
+
+  // Handle cookies (optional)
+  async setCookie(url, key, value) {
+    const options = {
+      url: url,
+      key: key,
+      value: value,
+    };
+    await Http.setCookie(options);
+  }
+
+  async deleteCookie(url, key) {
+    const options = {
+      url: url,
+      key: key,
+    };
+    await Http.deleteCookie(options);
+  }
+
+  async clearCookies(url) {
+    await Http.clearCookies({ url });
+  }
+
+  // Handle authentication (for example, token refresh)
+  async handleAuthError(error, originalRequest) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      originalRequest.isRefreshing = true;
+      try {
+        // Refresh token request
+        const refreshResponse = await this.post("/auth/account/token/refresh");
+        localStorage.setItem("tokenDataAuth", refreshResponse.data.token);
+        localStorage.setItem("userIsLoggedIn", "true");
+        localStorage.setItem(
+          "userData",
+          JSON.stringify(refreshResponse.data.data)
+        );
+
+        // Retry original request with updated token
+        originalRequest.headers["Authorization"] = ` ${localStorage.getItem(
+          "tokenDataAuth"
+        )}`;
+        originalRequest.isRefreshing = false;
+        return Http.request(originalRequest);
+      } catch (refreshError) {
+        // Handle refresh token failure
+        localStorage.clear();
+        this.router.push({ path: "/auth/login" });
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+  async attachTokenToRequest(config) {
+    const token = localStorage.getItem("tokenDataAuth");
+    if (token) {
+      config.headers["Authorization"] = ` ${token}`;
+    }
+    return config;
+  }
+
+  async getInstance() {}
 }
 
-export let apiClient = new ApiClient();
+export const apiClient = new ApiClient();

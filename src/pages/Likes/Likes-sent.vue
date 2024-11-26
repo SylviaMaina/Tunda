@@ -9,7 +9,7 @@
         style="width: 8rem; height: 10rem; border-radius: 1rem"
       >
         <img
-          :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
+          :src="`${config.API_BASE_URL}/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
           alt=".."
           style="object-fit: fill; width: 8rem; height: 10rem"
         />
@@ -26,13 +26,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { apiClient } from "app/Storage/api";
+import config from "src/config";
 
 const info = ref([]);
 const data = ref([]);
 
 const fetchInterests = async () => {
   try {
-    const response = await apiClient.get("matches/requests/");
+    const response = await apiClient.get("/matches/requests/");
     if (response.data.success) {
       info.value = response.data.results.docs;
       await fetchMatchDetails(info.value);
@@ -48,7 +49,7 @@ const fetchMatchDetails = async (matchRequests) => {
 
     const matchDetailsResponses = await Promise.all(
       matchIds.map(async (id) => {
-        const response = await apiClient.get(`matches/profile/?user_id=${id}`);
+        const response = await apiClient.get(`/matches/profile/?user_id=${id}`);
         return response.data.success ? response.data.results : null;
       })
     );

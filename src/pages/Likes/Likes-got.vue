@@ -23,7 +23,7 @@
         "
       >
         <img
-          :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
+          :src="`${config.API_BASE_URL}/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
           alt=".."
           style="object-fit: fill; width: 8rem; height: 10rem"
         />
@@ -58,6 +58,7 @@ import { ref, onMounted } from "vue";
 import { apiClient } from "app/Storage/api";
 import { useRouter } from "vue-router";
 import { useUserStore } from "src/stores/useUserStore";
+import config from "src/config";
 
 const matches = ref([]); // Array to hold match details
 const otherPersons = ref([]); // Array to hold user profiles of matches
@@ -67,7 +68,7 @@ const userData = useUserStore();
 // Fetch match data for the logged-in user
 const fetchMatches = async () => {
   try {
-    const response = await apiClient.get("matches/");
+    const response = await apiClient.get("/matches/");
     if (response.data.success) {
       // Extract the list of matches
       const rawMatches = response.data.results.docs;
@@ -92,7 +93,7 @@ const fetchMatchProfiles = async () => {
     // Fetch profiles for all matched IDs
     const profilePromises = matches.value.map(async (matchId) => {
       const response = await apiClient.get(
-        `matches/profile/?user_id=${matchId}`
+        `/matches/profile/?user_id=${matchId}`
       );
       return response.data.results;
     });

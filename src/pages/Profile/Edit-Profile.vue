@@ -58,6 +58,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { apiClient } from "app/Storage/api";
+import config from "src/config";
 
 const router = useRouter();
 const userData = useUserStore();
@@ -94,7 +95,7 @@ const EditProfile = async () => {
 
   try {
     const res = await apiClient.patch(
-      "http://212.47.72.98:3001/api/v1/profile/update/",
+      `${config.API_BASE_URL}/profile/update/`,
       payload
     );
     if (res.data.success) {

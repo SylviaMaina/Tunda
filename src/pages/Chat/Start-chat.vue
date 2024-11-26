@@ -86,7 +86,7 @@
     </div>
     <div style="width: 90vw; margin: 0 auto; height: 32rem; position: relative">
       <img
-        :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${info?.photos[0].saved_file_name}`"
+        :src="`${config.API_BASE_URL}/media/file/?file_path=${info?.photos[0].saved_file_name}`"
         alt=".."
         style="
           height: 100%;
@@ -217,6 +217,7 @@
 
 <script setup>
 import { apiClient } from "app/Storage/api";
+import config from "src/config";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -229,7 +230,7 @@ const userId = route.query.id;
 // Function to fetch matches
 const getMatch = async () => {
   try {
-    const response = await apiClient.get(`matches/profile/?user_id=${userId}`);
+    const response = await apiClient.get(`/matches/profile/?user_id=${userId}`);
 
     const users = response.data.results;
 

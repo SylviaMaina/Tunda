@@ -52,7 +52,7 @@
         <q-img
           :src="
             user.photos[0]?.saved_file_name
-              ? `http://212.47.72.98:3001/api/v1/media/file/?file_path=${user.photos[0]?.saved_file_name}`
+              ? `${config.API_BASE_URL}/media/file/?file_path=${user.photos[0]?.saved_file_name}`
               : '../../assets/Asset 1 1.png'
           "
           alt="tunda app"
@@ -321,6 +321,7 @@
 
 <script setup>
 import AuthSession from "app/Storage/AuthSession";
+import config from "src/config";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 

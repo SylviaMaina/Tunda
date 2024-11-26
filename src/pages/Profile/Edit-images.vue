@@ -41,7 +41,7 @@
       <div class="q-gutter-sm gallery-grid">
         <q-card v-for="(item, index) in info" :key="index" class="my-card">
           <q-img
-            :src="`http://212.47.72.98:3001/api/v1/media/file/?file_path=${item.saved_file_name}`"
+            :src="`${config.API_BASE_URL}/media/file/?file_path=${item.saved_file_name}`"
             alt="Image"
             style="object-fit: cover; width: 10rem; height: 10rem"
             @click="() => router.push('/image')"
@@ -132,6 +132,7 @@ import { apiClient } from "app/Storage/api";
 import { useUserStore } from "src/stores/useUserStore";
 import AuthSession from "app/Storage/AuthSession";
 import axios from "axios";
+import config from "src/config";
 
 const router = useRouter();
 const files = ref([]);
@@ -142,7 +143,7 @@ const showUploadDialog = ref(false);
 
 const fetchInterests = async () => {
   try {
-    const response = await apiClient.get("media/");
+    const response = await apiClient.get("/media/");
     if (response.data.success) {
       info.value = response.data.results.docs;
       console.log(response.data.results);
@@ -185,7 +186,7 @@ async function uploadFiles() {
     const token = AuthSession.getToken();
 
     const res = await axios.patch(
-      "http://212.47.72.98:3001/api/v1/profile/photos/",
+      `${config.API_BASE_URL}/profile/photos/`,
       formData,
       {
         headers: {

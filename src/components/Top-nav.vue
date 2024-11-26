@@ -64,7 +64,7 @@ const data = ref(null);
 
 const fetchInterests = async () => {
   try {
-    const response = await apiClient.get("matches/");
+    const response = await apiClient.get("/matches/");
     if (response.data.success) {
       info.value = response.data.results.docs;
       console.log(info?.value?.length);
@@ -76,7 +76,7 @@ const fetchInterests = async () => {
 
 const fetchRequests = async () => {
   try {
-    const response = await apiClient.get("matches/requests/");
+    const response = await apiClient.get("/matches/requests/");
     if (response.data.success) {
       data.value = response.data.results.docs;
       console.log(data?.value?.length);

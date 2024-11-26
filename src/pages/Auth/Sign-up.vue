@@ -27,8 +27,9 @@
       <q-icon name="close" color="red" size="1.2rem" @click="dismissError" />
     </div>
   </q-banner>
+
   <div class="body">
-    <div class="">
+    <div>
       <h6 class="q-py-sm no-margin" style="font-size: 22px; font-weight: 700">
         Create an account
       </h6>
@@ -36,6 +37,7 @@
         Please provide your bio data...
       </h6>
     </div>
+
     <div class="q-my-lg">
       <q-form class="q-gutter-md">
         <q-input
@@ -46,47 +48,83 @@
           v-model="full_name"
           placeholder="Please enter"
         />
+
         <q-input outlined type="email" label="Email" v-model="email" />
+        <!-- Country Dropdown -->
+
         <q-input
-          outlined
+          borderless
+          style="border: 0.05rem solid darkgray; border-radius: 0.2rem"
           label="Mobile Number"
           type="tel"
           v-model="phone_number"
-          placeholder="Please enter"
-        />
+          :mask="phoneMask"
+          class="q-pa-none"
+          placeholder="Enter phone number"
+        >
+          <!-- Prepended Q-Select with no padding or margin -->
+          <template v-slot:prepend>
+            <q-select
+              borderless
+              dense
+              v-model="selectedCountry"
+              :options="countryOptions"
+              style="width: 4rem"
+              class="q-pa-none q-ma-none"
+              @update:model-value="onCountryChange"
+              option-value="code"
+              option-label="label"
+            />
+          </template>
+        </q-input>
+
         <q-select outlined :options="options" label="Gender" v-model="gender" />
-        <q-input outlined type="date" label="DoB" v-model="dob" />
+
+        <q-input outlined type="date" label="DoB" v-model="dob" :max="maxDob" />
+
         <q-input
           outlined
           required
-          type="password"
+          :type="isPwd ? 'password' : 'text'"
           v-model="password"
           :error="!isValid"
           placeholder="Please enter"
           label="Password"
         >
-          <template v-slot:error>
-            Please use minimum 8 characters.
-          </template></q-input
-        >
+          <template v-slot:error> Please use minimum 8 characters. </template>
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
 
         <q-input
           outlined
           required
           placeholder="Please enter"
+          :type="isPwd ? 'password' : 'text'"
           label="Confirm password"
           v-model="confirm_password"
           :error="!matches"
         >
-          <template v-slot:error>
-            Please make sure passwords match.
-          </template></q-input
-        >
+          <template v-slot:error> Please make sure passwords match. </template>
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
 
         <q-checkbox
           v-model="right"
-          label="I understand and agree to all  Terms and Conditions, Policies"
+          label="I understand and agree to all Terms and Conditions, Policies"
         />
+
         <div>
           <q-btn
             label="Next"
@@ -99,14 +137,15 @@
         </div>
       </q-form>
     </div>
+
     <div>
       <h6 class="text-subtitle2 flex flex-center">
-        Already have an account?<span
-          class="q-ml-sm text-weight-bold text-subtitle2 text-black"
-          ><router-link to="/login" style="text-decoration: none; color: black"
-            >Sign in</router-link
-          ></span
-        >
+        Already have an account?
+        <span class="q-ml-sm text-weight-bold text-subtitle2 text-black">
+          <router-link to="/login" style="text-decoration: none; color: black">
+            Sign in
+          </router-link>
+        </span>
       </h6>
     </div>
   </div>
@@ -117,7 +156,9 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { Geolocation } from "@capacitor/geolocation";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { Notify } from "quasar";
+import config from "src/config";
 
 const options = ["female", "male"];
 const email = ref("");
@@ -127,12 +168,20 @@ const dob = ref("");
 const gender = ref(options.value);
 const password = ref("");
 const confirm_password = ref("");
+const isPwd = ref("password");
 const right = ref(false);
 const router = useRouter();
+const countryOptions = [
+  { label: "Kenya", value: "KE" },
+  { label: "Uganda", value: "UG" },
+  { label: "Tanzania", value: "TZ" },
+  { label: "Rwanda", value: "RW" },
+  { label: " Burundi", value: "BI" },
+  { label: "South Sudan", value: "SS" },
+  { label: "United States", value: "US" },
+];
+const selectedCountry = ref("KE");
 const error = ref(null);
-
-const isValid = computed(() => password.value?.length >= 8);
-const matches = computed(() => password.value === confirm_password.value);
 
 const getLocation = async () => {
   try {
@@ -150,24 +199,58 @@ const getLocation = async () => {
   }
 };
 
+const phoneMask = computed(() => {
+  switch (selectedCountry.value) {
+    case "KE": // Kenya
+      return "+254 (###) ###-###";
+    case "UG": // Uganda
+      return "+256 (###) ###-###";
+    case "TZ": // Tanzania
+      return "+255 (###) ###-###";
+    case "RW": // Rwanda
+      return "+250 (###) ###-###";
+    case "BI": // Burundi
+      return "+257 (###) ###-###";
+    case "SS": // South Sudan
+      return "+211 (###) ###-###";
+    default:
+      return "+1 (###) ###-####"; // Default to the US
+  }
+});
+
+const onCountryChange = (countryCode) => {
+  const phoneNumber = parsePhoneNumberFromString(
+    phone_number.value,
+    countryCode
+  );
+  if (phoneNumber) {
+    phone_number.value = phoneNumber.formatInternational();
+  }
+};
+const isValid = computed(() => password.value?.length >= 8);
+const matches = computed(() => password.value === confirm_password.value);
+
+// Calculate the max allowed date for the date of birth (18 years ago)
+const maxDob = computed(() => {
+  const today = new Date();
+  today.setFullYear(today.getFullYear() - 18);
+  return today.toISOString().split("T")[0];
+});
+
 const register = async () => {
   const formattedDob = new Date(dob.value).toISOString().split("T")[0];
 
   try {
-    const res = await axios.post(
-      "http://212.47.72.98:3001/api/v1/users/register/",
-      {
-        email: email.value,
-        phone_number: phone_number.value,
-        full_name: full_name.value,
-        gender: gender.value,
-        dob: formattedDob,
-        password: password.value,
-        confirm_password: confirm_password.value,
-      }
-    );
+    const res = await axios.post(`${config.API_BASE_URL}/users/register/`, {
+      email: email.value,
+      phone_number: phone_number.value,
+      full_name: full_name.value,
+      gender: gender.value,
+      dob: formattedDob,
+      password: password.value,
+      confirm_password: confirm_password.value,
+    });
 
-    // Check if registration was successful
     if (res.data.success) {
       console.log("Registration Successful");
       router.push("/login");
@@ -175,7 +258,6 @@ const register = async () => {
       error.value = res.data.message || "Error registering";
     }
   } catch (err) {
-    // Set error message if registration fails
     error.value =
       err.response?.data?.message?.en ||
       "Something went wrong, please try again or reach out to customer support";
@@ -185,7 +267,6 @@ const register = async () => {
 
 const dismissError = () => {
   error.value = null;
-  Loading.hide();
 };
 
 onMounted(getLocation);
