@@ -322,7 +322,6 @@
 <script setup>
 import AuthSession from "app/Storage/AuthSession";
 import config from "src/config";
-import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
