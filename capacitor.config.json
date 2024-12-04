@@ -15,6 +15,6 @@
   },
   "server": {
     "cleartext": true,
-    "allowNavigation": ["212.47.72.98"]
+    "allowNavigation": ["157.173.126.39", "192.168.100.33:9500"]
   }
 }

@@ -64,19 +64,18 @@
               class="q-gutter-sm"
             >
               <div v-for="content in item.interests" :key="content.label">
-                <q-btn-toggle
-                  v-model="content.selected"
-                  no-caps
-                  size="13px"
-                  flat
-                  style="
-                    border: 1px solid gray;
-                    height: 2.5rem;
-                    width: max-content;
+                <q-btn
+                  :flat="!isSelected(item.name, content.value)"
+                  :color="
+                    isSelected(item.name, content.value) ? 'primary' : 'gray'
                   "
-                  toggle-color="primary"
-                  :options="[{ label: content.label, value: content.value }]"
-                />
+                  @click="toggleSelection(item.name, content.value)"
+                  size="12.5px"
+                  style="border: 1px solid gray; height: 2.5rem; width: 6.5rem"
+                  no-caps
+                >
+                  {{ content.label }}
+                </q-btn>
               </div>
             </div>
           </div>
@@ -119,7 +118,6 @@ const fetchInterests = async () => {
           selected: content.selected || false,
         })),
       }));
-      console.log(response.data.results);
     }
   } catch (error) {
     console.error("Error fetching interests:", error);
@@ -129,6 +127,25 @@ const fetchInterests = async () => {
 onMounted(fetchInterests);
 
 // Submit interests to the backend
+const selectedInterests = ref({}); // Tracks selections per category
+
+const isSelected = (category, value) => {
+  return selectedInterests.value[category]?.includes(value);
+};
+
+const toggleSelection = (category, value) => {
+  if (!selectedInterests.value[category]) {
+    selectedInterests.value[category] = [];
+  }
+  const index = selectedInterests.value[category].indexOf(value);
+  if (index === -1) {
+    selectedInterests.value[category].push(value); // Add value if not selected
+  } else {
+    selectedInterests.value[category].splice(index, 1); // Remove value if selected
+  }
+};
+
+// Prepare payload for submission
 const submitInterests = async () => {
   Loading.show();
   try {
@@ -138,7 +155,7 @@ const submitInterests = async () => {
         interests: item.interests.map((content) => ({
           label: content.label,
           value: content.value,
-          selected: content.selected,
+          selected: isSelected(item.name, content.value),
         })),
       })),
     };

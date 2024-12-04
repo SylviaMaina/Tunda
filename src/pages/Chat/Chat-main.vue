@@ -73,7 +73,9 @@
           </q-item-section>
 
           <q-item-section side top>
-            <q-item-label caption>5 min ago</q-item-label>
+            <q-item-label caption>
+              {{ formatTimestamp(contact.updatedAt) }}
+            </q-item-label>
             <q-item-label>
               <q-icon name="sell" class="q-pl-sm" color="dark" />
             </q-item-label>
@@ -81,13 +83,30 @@
       ></router-link>
     </div>
   </q-list>
+  <div v-if="threads?.length === 0">
+    <h6
+      class="text-caption text-dark"
+      style="
+        width: 60%;
+        margin: 0 auto;
+        height: 20rem;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      No chats started
+    </h6>
+  </div>
 </template>
 
 <script setup>
 import { apiClient } from "app/Storage/api";
 import AuthSession from "app/Storage/AuthSession";
-import config from "src/config";
+import { config } from "src/boot/http";
 import { onMounted, ref } from "vue";
+import { format, isToday, isYesterday } from "date-fns"; // Import date-fns for formatting
 
 const threads = ref([]);
 const token = AuthSession.getToken();
@@ -98,6 +117,21 @@ const props = defineProps({
     required: true,
   },
 });
+
+// Utility function to format the updated_at timestamp
+const formatTimestamp = (timestamp) => {
+  const date = new Date(timestamp);
+  if (isToday(date)) {
+    // If it's today, show the time
+    return format(date, "h:mm: a");
+  } else if (isYesterday(date)) {
+    // If it's yesterday, show "Yesterday"
+    return "Yesterday";
+  } else {
+    // Otherwise, show the date
+    return format(date, "d-MM-yyyy");
+  }
+};
 
 // Load all threads for the user
 const loadThreads = async () => {

@@ -73,9 +73,8 @@
 
 <script setup>
 import AuthSession from "app/Storage/AuthSession";
-import axios from "axios";
 import { Loading } from "quasar";
-import config from "src/config";
+import { config } from "src/boot/http";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -109,17 +108,14 @@ async function uploadFiles() {
   try {
     const token = AuthSession.getToken();
 
-    const res = await axios.patch(
-      `${config.API_BASE_URL}/profile/photos/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: ` ${token}`,
-        },
-      }
-    );
-    if (res.data.success) {
+    const res = await fetch(`${config.API_BASE_URL}/profile/photos/`, {
+      method: "PATCH",
+      headers: {
+        Authorization: ` ${token}`,
+      },
+      body: formData,
+    });
+    if (res.ok) {
       Loading.hide();
       router.push("/home");
     }
@@ -130,6 +126,7 @@ async function uploadFiles() {
     error.value = err.response?.data?.message || "Error uploading files";
   }
 }
+console.log(files.value);
 </script>
 
 <style lang="scss" scoped>

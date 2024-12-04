@@ -64,7 +64,9 @@
         <h6 class="no-margin text-dark text-subtitle2">Nairobi,Kenya</h6>
       </div>
     </div>
-    <q-icon color="dark" name="o_notifications" size="32px" />
+    <router-link to="/notifications">
+      <q-icon color="dark" name="o_notifications" size="32px"
+    /></router-link>
   </div>
   <div
     style="
@@ -560,7 +562,7 @@ import { onMounted, ref } from "vue";
 import { Loading, useQuasar } from "quasar";
 import { apiClient } from "app/Storage/api";
 import AuthSession from "app/Storage/AuthSession";
-import config from "src/config";
+import { config } from "src/boot/http";
 
 const filter = ref(false);
 const distance = ref(0);
@@ -582,18 +584,24 @@ defineProps({
 });
 
 const getMatch = async () => {
-  const minAge = age.value.min;
-  const maxAge = age.value.max;
-  const maxDistance = distance.value;
+  const savedFilters = JSON.parse(localStorage.getItem("filters"));
+  const minAge = savedFilters?.age?.min ?? 18;
+  const maxAge = savedFilters?.age?.max ?? 100;
+  const maxDistance = savedFilters?.distance ?? 0;
+  const setGender = savedFilters?.gender ?? null;
+
   try {
     const response = await apiClient.get(
-      `/matches/find/?coordinates=${AuthSession.getLocation()}&max_match_distance_km=${maxDistance}&gender=${
-        gender.value
-      }&min_age=${minAge}&max_age=${maxAge}`
+      `/matches/find/?coordinates=${AuthSession.getLocation()}&max_match_distance_km=${maxDistance}&gender=${setGender}&min_age=${minAge}&max_age=${maxAge}`
     );
     info.value = response.data.results.docs;
   } catch (error) {
     console.error("Error:", error);
+    $q.notify({
+      color: "negative",
+      message: "Failed to fetch matches. Please try again later.",
+      position: "top",
+    });
   }
 };
 
@@ -612,6 +620,7 @@ const updateFilters = () => {
 // Retrieve filters from localStorage if they exist
 const retrieveFilters = () => {
   const savedFilters = JSON.parse(localStorage.getItem("filters"));
+  console.log(savedFilters);
   if (savedFilters) {
     distance.value = savedFilters.distance || 0;
     age.value = savedFilters.age || { min: 18, max: 100 };
@@ -639,10 +648,10 @@ const applyFilters = () => {
 // Clear all filters
 const clearFilters = () => {
   localStorage.removeItem("filters");
-  value.value = 0;
-  standard.value = { min: 18, max: 100 };
-  model.value = null;
-  location.value = "";
+  distance.value = 0;
+  age.value = { min: 18, max: 100 };
+  gender.value = null;
+  location.value = ""; // Assuming location is used somewhere
   getMatch();
   $q.notify({
     color: "red",
@@ -739,7 +748,7 @@ const showLike = async () => {
 
 onMounted(async () => {
   await getMatch();
-  console.log("Match info:", info.value);
+  retrieveFilters();
 });
 
 function calculateAge(dob) {

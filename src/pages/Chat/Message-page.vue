@@ -57,10 +57,12 @@
       </h6>
     </div>
   </div>
+
   <div
     style="
-      height: 46rem;
+      height: 50rem;
       display: flex;
+      position: relative;
       justify-content: space-between;
       align-items: center;
       flex-direction: column;
@@ -78,7 +80,6 @@
         :text-color="msg.sender_id === userData.user?.id ? 'white' : 'black'"
         :sent="msg.sender_id === currentUser.id"
       />
-      <!-- Show typing indicator if the other user is typing -->
       <div v-if="isTyping" class="text-grey-6 text-caption">Typing...</div>
     </div>
 
@@ -87,45 +88,111 @@
       style="
         width: 100%;
         margin: 0 auto;
+        position: sticky;
+        bottom: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
       "
+      class="q-pa-md"
     >
       <q-input
         outlined
-        class="full-width"
+        class="full-width textField"
         v-model="newMessage"
         placeholder="Type a message"
         @focus="handleTyping"
         @keydown.enter="sendMessage"
-        ><template v-slot:prepend
-          ><q-btn
+      >
+        <template v-slot:prepend>
+          <q-btn
             icon="attach_file"
             flat
             dense
-            @click="triggerFileInput"
+            @click="showUploadDialog = true"
           ></q-btn>
-
-          <q-input
-            type="file"
-            v-model="fileInput"
-            @change="handleFileChange"
-            style="display: none"
-            multiple
-          />
         </template>
         <q-btn
           icon="send"
-          color="primary"
+          :color="newMessage ? 'primary' : 'grey'"
           flat
           dense
           @click="sendMessage"
-        ></q-btn
-      ></q-input>
+        ></q-btn>
+      </q-input>
     </div>
   </div>
 
+  <!-- Popup Dialog for File Upload -->
+  <q-dialog v-model="showUploadDialog" persistent>
+    <q-card
+      class="q-pa-md"
+      style="
+        width: 24rem;
+        height: 30rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      "
+    >
+      <div class="text-h6 q-mb-md">Attach Files</div>
+      <div class="file-input-container">
+        <q-file
+          :model-value="files"
+          @update:model-value="updateFiles"
+          multiple
+          append
+        >
+          <q-icon name="o_cloud" size="5rem" color="dark" />
+          <h6 class="text-dark text-weight-bold">Click to upload</h6>
+          <h6
+            class="text-dark text-center text-subtitle1 no-caps text-weight-thin"
+          >
+            Supported formats: JPG, JPEG, PNG | Max size: 2MB
+          </h6>
+        </q-file>
+      </div>
+      <div v-for="(file, index) in files" :key="file.name" class="file-preview">
+        <q-chip class="full-width q-my-xs" square @remove="cancelFile(index)">
+          <div style="display: flex; align-items: center">
+            <q-avatar>
+              <img :src="getFilePreviewUrl(file)" alt="File preview" />
+            </q-avatar>
+
+            <div class="ellipsis relative-position">
+              {{ file.name }}
+            </div>
+
+            <q-tooltip>
+              {{ file.name }}
+            </q-tooltip>
+          </div>
+          <q-avatar @click="cancelFile(index)">
+            <q-icon name="o_delete" class="text-black" size="24px" />
+          </q-avatar>
+        </q-chip>
+      </div>
+
+      <div class="q-gutter-sm q-mt-md flex justify-end">
+        <q-btn
+          flat
+          no-caps
+          label="Cancel"
+          color="secondary"
+          @click="closeDialog"
+        />
+        <q-btn
+          color="primary"
+          label="Attach"
+          icon="o_cloud"
+          @click="finalizeFiles"
+          no-caps
+        />
+      </div>
+    </q-card>
+  </q-dialog>
+
+  <!-- Previews in Message Input -->
   <div v-if="previews?.length > 0" class="file-previews">
     <div v-for="(file, index) in previews" :key="index" class="file-preview">
       <q-avatar>
@@ -143,26 +210,77 @@ import { io } from "socket.io-client";
 import { apiClient } from "app/Storage/api";
 import { useUserStore } from "src/stores/useUserStore";
 import AuthSession from "app/Storage/AuthSession";
-import axios from "axios";
-import { useRoute } from "vue-router";
-import config from "src/config";
+import { config } from "src/boot/http";
 
 const $q = useQuasar();
 const previews = ref([]);
 const messages = ref([]);
 const newMessage = ref("");
 const fileInput = ref(null);
+const files = ref([]);
 const isTyping = ref(false);
 const currentUser = ref("");
 const currentThread = ref("");
 const threads = ref([]);
 const token = AuthSession.getToken();
 const socket = ref(null);
-const route = useRoute();
 const info = ref(null);
 const matchId = ref(null);
+const showUploadDialog = ref(false);
 
 const userData = useUserStore();
+
+const getFilePreviewUrl = (file) => {
+  return URL.createObjectURL(file); // Generate the preview URL for the file
+};
+
+// Update selected files
+const updateFiles = (selectedFiles) => {
+  const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+  const validFiles = Array.from(selectedFiles).filter((file) =>
+    validTypes.includes(file.type)
+  );
+
+  if (validFiles.length !== selectedFiles.length) {
+    $q.notify({
+      message: "Some files were not supported and have been rejected.",
+      color: "negative",
+    });
+  }
+
+  files.value = validFiles;
+};
+
+// Finalize file selection
+const finalizeFiles = () => {
+  previews.value = files.value.map((file) => ({
+    file,
+    previewUrl: URL.createObjectURL(file),
+    name: file.name,
+  }));
+  showUploadDialog.value = false;
+};
+
+// Function to cancel individual file
+function cancelFile(index) {
+  // Remove file from the 'files' array
+  files.value.splice(index, 1);
+
+  // Optionally also remove from 'previews' if it's used separately
+  previews.value.splice(index, 1);
+
+  // If you have a 'previewUrl' to clean up, revoke the object URL
+  if (previews.value[index] && previews.value[index].previewUrl) {
+    URL.revokeObjectURL(previews.value[index].previewUrl);
+  }
+}
+
+// Close dialog
+const closeDialog = () => {
+  files.value = [];
+  previews.value = [];
+  showUploadDialog.value = false;
+};
 
 // Trigger file input for attachment
 const triggerFileInput = () => {
@@ -203,7 +321,6 @@ const loadThreads = async () => {
 };
 // Fetch user interests and match details
 const fetchMatch = async () => {
-  // Ensure info.value is populated before proceeding
   if (!info.value?.id) {
     console.error("info.value is not set yet.");
     return;
@@ -221,8 +338,6 @@ const fetchMatch = async () => {
             match?.match_2?.id === info.value.id)
       );
 
-      console.log(matches);
-
       if (matchingMatch) {
         matchId.value = matchingMatch.id;
       }
@@ -235,7 +350,7 @@ const fetchMatch = async () => {
 // Initialize Socket.IO
 const initializeSocket = () => {
   if (socket.value) return;
-  socket.value = io("http://212.47.72.98:3001", {
+  socket.value = io(`${config.API_BASE_URL}`, {
     path: "/soc",
     transports: ["websocket", "polling"],
     auth: { token },
@@ -313,16 +428,13 @@ const sendMessage = async () => {
   const token = AuthSession.getToken();
 
   try {
-    const response = await axios.post(
-      `${config.API_BASE_URL}/messages/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: ` ${token}`,
-        },
-      }
-    );
+    const res = await fetch(`${config.API_BASE_URL}/profile/photos/`, {
+      method: "POST",
+      headers: {
+        Authorization: ` ${token}`,
+      },
+      body: formData,
+    });
     newMessage.value = "";
     fileInput.value = null;
     previews.value = []; // Reset file previews after sending
@@ -370,29 +482,59 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.q-message-text) {
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-  width: 18rem;
-  margin-bottom: 1rem;
-  padding: 10px;
+.file-input-container {
+  :deep(.q-message-text) {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    width: 18rem;
+    margin-bottom: 1rem;
+    padding: 10px;
+  }
+
+  :deep(.q-message-text--received) {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 0rem;
+    width: 18rem;
+    padding: 10px;
+    margin-bottom: 1rem;
+  }
+
+  :deep(.q-message-stamp) {
+    text-align: right;
+    font-size: 0.6rem;
+  }
+
+  :deep(.q-field__control-container) {
+    border: 2px dashed gray;
+    width: 100%;
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
-:deep(.q-message-text--received) {
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  border-bottom-left-radius: 0rem;
-  width: 18rem;
-  padding: 10px;
-  margin-bottom: 1rem;
+:deep(.q-chip) {
+  border: 1px solid #00a881;
+  background: #f0faf8;
+  height: 5rem;
+  font-size: medium;
+  padding-left: 1.4rem;
 }
-:deep(.q-field__control) {
+:deep(.q-chip__content) {
+  display: flex;
+  justify-content: space-between;
+}
+.textField {
   padding: 0;
   height: 2.5rem;
   display: flex;
   align-items: center;
 }
+
 .file-previews {
   display: flex;
   flex-wrap: wrap;
@@ -409,9 +551,5 @@ onBeforeUnmount(() => {
 .file-preview img {
   max-width: 80px;
   max-height: 80px;
-}
-:deep(.q-message-stamp) {
-  text-align: right;
-  font-size: 0.6rem;
 }
 </style>

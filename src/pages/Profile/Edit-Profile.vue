@@ -55,10 +55,9 @@
 <script setup>
 import { useUserStore } from "src/stores/useUserStore";
 import { onMounted, ref } from "vue";
-import axios from "axios";
 import { useRouter } from "vue-router";
 import { apiClient } from "app/Storage/api";
-import config from "src/config";
+import { config } from "src/boot/http";
 
 const router = useRouter();
 const userData = useUserStore();
@@ -99,7 +98,6 @@ const EditProfile = async () => {
       payload
     );
     if (res.data.success) {
-      console.log("Update Successful");
       router.push({ path: "/profile" });
     } else {
       console.error(res.data.message || "Error updating profile");

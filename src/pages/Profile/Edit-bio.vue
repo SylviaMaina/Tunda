@@ -105,8 +105,6 @@ const dismissError = () => {
 onMounted(() => {
   userData.fetchUserData();
 });
-
-console.log(userData.user);
 </script>
 
 <style lang="scss" scoped>

@@ -7,23 +7,26 @@
         </h6>
         <div
           style="
-            height: 10rem;
+            height: max-content;
             display: grid;
-            grid-template-columns: repeat(3, 7.8rem);
+            grid-area: auto;
+            grid-template-columns: repeat(3, 8rem);
           "
         >
           <div v-for="category in userData.user.interests" :key="category.name">
             <div class="q-gutter-md q-mb-md">
               <q-btn-toggle
-                v-for="interest in category.interests.slice(0, 1)"
+                v-for="interest in category.interests.slice(0, 3)"
                 :key="interest.value"
                 v-model="interest.selected"
                 no-caps
+                size="12.5px"
                 flat
                 style="
                   border: 1px solid #ff6f61;
                   height: 2.5rem;
                   color: #ff6f61;
+                  width: 6.5rem;
                 "
                 toggle-color="primary"
                 :options="[{ label: interest.label, value: interest.value }]"
@@ -32,7 +35,7 @@
           </div>
         </div>
       </div>
-      <h6 style="font-size: 18px; font-weight: 600">Select othe interests</h6>
+      <h6 style="font-size: 18px; font-weight: 600">Select other interests</h6>
       <div class="q-my-sm" v-for="item in interest" :key="item.name">
         <div>
           <h6 class="q-py-sm" style="font-size: 18px; font-weight: 600">
@@ -43,26 +46,32 @@
             class="q-gutter-md"
           >
             <div v-for="content in item.interests" :key="content.label">
-              <q-btn-toggle
-                v-model="content.selected"
-                no-caps
-                size="13px"
-                flat
-                style="
-                  border: 1px solid gray;
-                  height: 2.5rem;
-                  width: max-content;
+              <q-btn
+                :flat="!isSelected(item.name, content.value)"
+                :color="
+                  isSelected(item.name, content.value) ? 'primary' : 'gray'
                 "
-                toggle-color="primary"
-                :options="[{ label: content.label, value: content.value }]"
-              />
+                @click="toggleSelection(item.name, content.value)"
+                size="12.5px"
+                style="border: 1px solid gray; height: 2.5rem; width: 6.5rem"
+                no-caps
+              >
+                {{ content.label }}
+              </q-btn>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; width: 94%">
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        width: 94%;
+        padding-top: 1rem;
+      "
+    >
       <q-btn
         label="Discard changes"
         type="submit"
@@ -88,12 +97,16 @@
 
 <script setup>
 import { apiClient } from "app/Storage/api";
+import { Loading, useQuasar } from "quasar";
 import { useUserStore } from "src/stores/useUserStore";
 import { onMounted } from "vue";
 import { ref } from "vue";
 
+const selectedInterests = ref({});
 const userData = useUserStore();
 const interest = ref([]);
+const error = ref(null);
+const $q = useQuasar();
 
 const fetchInterests = async () => {
   try {
@@ -106,7 +119,6 @@ const fetchInterests = async () => {
           selected: content.selected || false,
         })),
       }));
-      console.log(response.data.results);
     }
   } catch (error) {
     console.error("Error fetching interests:", error);
@@ -123,26 +135,59 @@ const discardChanges = () => {
   userData.fetchUserData();
 };
 
-const updateInterests = async () => {
-  const updatedInterests = userData.user.interests.map((category) => {
-    return {
-      name: category.name,
-      interests: category.interests.filter((interest) => interest.selected),
-    };
-  });
+const isSelected = (category, value) => {
+  return selectedInterests.value[category]?.includes(value);
+};
 
+const toggleSelection = (category, value) => {
+  if (!selectedInterests.value[category]) {
+    selectedInterests.value[category] = [];
+  }
+  const index = selectedInterests.value[category].indexOf(value);
+  if (index === -1) {
+    selectedInterests.value[category].push(value); // Add value if not selected
+  } else {
+    selectedInterests.value[category].splice(index, 1); // Remove value if selected
+  }
+};
+
+// Prepare payload for submission
+const updateInterests = async () => {
+  Loading.show();
   try {
-    const res = await apiClient.patch("/profile/update/", {
-      interests: updatedInterests,
-    });
+    const interestsPayload = {
+      interests: interest.value.map((item) => ({
+        name: item.name,
+        interests: item.interests.map((content) => ({
+          label: content.label,
+          value: content.value,
+          selected: isSelected(item.name, content.value),
+        })),
+      })),
+    };
+
+    const res = await apiClient.patch("/profile/update/", interestsPayload);
 
     if (res.data.success) {
-      console.log("Interests updated successfully");
+      Loading.hide();
+      $q.notify({
+        color: "green",
+        textColor: "white",
+        message: "Interests have been updated successfully!",
+        icon: "check_circle",
+        position: "top",
+        timeout: 2000,
+      });
+      fetchInterests();
     } else {
-      console.error(res.data.message || "Error updating interests");
+      error.value = res.data.message || "Error updating interests";
     }
   } catch (err) {
-    console.error("Failed to update interests:", err);
+    error.value =
+      err.response?.data?.message?.en ||
+      "Something went wrong, please try again or reach out to customer support";
+    console.error("Update failed:", err);
+    Loading.hide();
   }
 };
 </script>

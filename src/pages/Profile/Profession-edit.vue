@@ -92,7 +92,7 @@ const options = [
   "Bartender",
   "Designer",
   "Artist",
-  "SEcretary",
+  "Secretary",
   "Pharmacist",
   "Florist",
   "Model",

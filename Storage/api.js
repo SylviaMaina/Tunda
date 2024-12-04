@@ -1,5 +1,5 @@
 import { Http } from "@capacitor-community/http";
-import config from "src/config";
+import { config } from "src/boot/http";
 import { useRouter } from "vue-router";
 
 class ApiClient {
@@ -22,6 +22,9 @@ class ApiClient {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        "Referrer-Policy": "strict-origin-when-cross-origin", // Add Referrer Policy
+        "Access-Control-Allow-Methods":
+          "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD", // Add Access-Control-Allow-Methods
         ...conf.headers,
       },
       params: params,
@@ -64,7 +67,7 @@ class ApiClient {
     return this.request("DELETE", url, {}, conf);
   }
 
-  // Handle cookies (optional)
+  // Handle cookies
   async setCookie(url, key, value) {
     const options = {
       url: url,

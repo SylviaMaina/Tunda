@@ -35,7 +35,9 @@
           </h6>
         </div>
       </div>
-      <q-icon color="dark" name="o_notifications" size="30px" />
+      <router-link to="/notifications">
+        <q-icon color="dark" name="o_notifications" size="32px"
+      /></router-link>
     </div>
     <div
       style="
@@ -321,7 +323,7 @@
 
 <script setup>
 import AuthSession from "app/Storage/AuthSession";
-import config from "src/config";
+import { config } from "src/boot/http";
 import { useRouter } from "vue-router";
 
 const router = useRouter();

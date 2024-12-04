@@ -16,7 +16,7 @@
           }
         "
         style="
-          object-fit: fill;
+          object-fit: cover;
           width: 8rem;
           height: 10rem;
           border-radius: 1rem;
@@ -25,7 +25,7 @@
         <img
           :src="`${config.API_BASE_URL}/media/file/?file_path=${item.photos[0]?.saved_file_name}`"
           alt=".."
-          style="object-fit: fill; width: 8rem; height: 10rem"
+          style="object-fit: cover; width: 8rem; height: 10rem"
         />
         <div class="absolute-bottom text-subtitle2 text-start">
           <h6 class="text-white q-ma-sm text-weight-bold text-subtitle2">
@@ -58,7 +58,7 @@ import { ref, onMounted } from "vue";
 import { apiClient } from "app/Storage/api";
 import { useRouter } from "vue-router";
 import { useUserStore } from "src/stores/useUserStore";
-import config from "src/config";
+import { config } from "src/boot/http";
 
 const matches = ref([]); // Array to hold match details
 const otherPersons = ref([]); // Array to hold user profiles of matches

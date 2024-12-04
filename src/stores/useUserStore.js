@@ -11,7 +11,6 @@ export const useUserStore = defineStore("user", {
   actions: {
     async fetchUserData() {
       if (!this.isAuthenticated) {
-        console.log("User is not authenticated");
         return;
       }
 

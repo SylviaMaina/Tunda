@@ -26,7 +26,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { apiClient } from "app/Storage/api";
-import config from "src/config";
+import { config } from "src/boot/http";
 
 const info = ref([]);
 const data = ref([]);

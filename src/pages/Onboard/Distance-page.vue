@@ -48,7 +48,9 @@
         </h6>
       </div>
       <div>
-        <q-badge color="black"> Distance (Km) </q-badge>
+        <q-badge color="black" style="background: transparent">
+          Distance (Km)
+        </q-badge>
 
         <q-slider
           v-model="model"
@@ -83,7 +85,9 @@
 import { apiClient } from "app/Storage/api";
 import { Loading } from "quasar";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const model = ref(0);
 const error = ref(null);
 

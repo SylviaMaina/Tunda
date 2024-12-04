@@ -160,7 +160,7 @@
             "
             @click="
               () => {
-                router.push({ path: 'about/', query: { id: info.id } });
+                router.push({ path: 'otherprofile/', query: { id: info.id } });
               }
             "
           >
@@ -217,7 +217,7 @@
 
 <script setup>
 import { apiClient } from "app/Storage/api";
-import config from "src/config";
+import { config } from "src/boot/http";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -233,8 +233,6 @@ const getMatch = async () => {
     const response = await apiClient.get(`/matches/profile/?user_id=${userId}`);
 
     const users = response.data.results;
-
-    console.log(users);
 
     info.value = users;
   } catch (error) {

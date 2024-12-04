@@ -45,7 +45,7 @@
           style="font-size: 13px; font-weight: 400"
         >
           Input the verification code sent to the email you provided
-          {{ userData.user.email }}
+          {{ userData.user?.email }}
         </h6>
       </div>
       <div class="q-gutter-lg">
@@ -87,7 +87,11 @@ const Profession = async () => {
     });
     if (res.data.success) {
       Loading.hide();
-      router.push("/bio");
+      if (userData?.user?.bio?.trim() !== "") {
+        router.push("/home");
+      } else {
+        router.push("/bio");
+      }
     } else {
       error.value = res.data.message || "Error updating interests";
     }
@@ -106,7 +110,6 @@ const dismissError = () => {
 
 onMounted(async () => {
   await userData.fetchUserData();
-  console.log(userData.user);
 });
 </script>
 

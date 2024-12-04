@@ -51,46 +51,56 @@
 
         <q-input outlined type="email" label="Email" v-model="email" />
         <!-- Country Dropdown -->
-         <div class="phone-number-input-container">
+        <div class="phone-number-input-container">
           <q-select
-              borderless
-              dense
-              class=""
-              v-model="selectedCountry"
-              :options="countryOptions"
-              @update:model-value="onCountryChange"
-              option-value="value"
-            >
+            borderless
+            dense
+            class=""
+            v-model="selectedCountry"
+            :options="countryOptions"
+            @update:model-value="onCountryChange"
+            option-value="value"
+          >
             <template v-slot:option="scope">
               <q-item v-bind="scope.itemProps">
-                  <div class="">
-                    <img :src="`https://flagcdn.com/${scope.opt.value?.toLowerCase() }.svg`"
-                    style="max-width: 30px;">
-                  </div>
-                  <q-item-section class="address-location-options">
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.value }}</q-item-label>
-                  </q-item-section>
-                </q-item>
+                <div class="">
+                  <img
+                    :src="`https://flagcdn.com/${scope.opt.value?.toLowerCase()}.svg`"
+                    style="max-width: 30px"
+                  />
+                </div>
+                <q-item-section class="address-location-options">
+                  <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.value }}</q-item-label>
+                </q-item-section>
+              </q-item>
             </template>
             <template v-slot:selected-item="scope">
               <div class="">
-                <img :src="`https://flagcdn.com/${scope.opt.value?.toLowerCase() }.svg`"
-                style="max-width: 44px; height: 40px; object-fit: cover;">
+                <img
+                  :src="`https://flagcdn.com/${scope.opt.value?.toLowerCase()}.svg`"
+                  style="
+                    max-width: 40px;
+                    height: 40px;
+                    padding: 0.4rem;
+                    border-radius: rem;
+                    object-fit: cover;
+                  "
+                />
               </div>
-           </template>
-        </q-select>
-        <q-input
-          borderless
-          label="Mobile Number"
-          type="tel"
-          v-model="phone_number"
-          :mask="phoneMask"
-          class="q-pa-none"
-          placeholder="Enter phone number"
-        >
-        </q-input>
-      </div>
+            </template>
+          </q-select>
+          <q-input
+            borderless
+            label="Mobile Number"
+            type="tel"
+            v-model="phone_number"
+            :mask="phoneMask"
+            class="q-pa-none"
+            placeholder="Enter phone number"
+          >
+          </q-input>
+        </div>
 
         <q-select outlined :options="options" label="Gender" v-model="gender" />
 
@@ -166,14 +176,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { Geolocation } from "@capacitor/geolocation";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { Notify } from "quasar";
-import config from "src/config";
-
+import { config } from "src/boot/http";
 
 const options = ["female", "male"];
 const email = ref("");
@@ -204,7 +213,6 @@ const getLocation = async () => {
     const { latitude, longitude } = position.coords;
     const locationString = `[${latitude}, ${longitude}]`;
     localStorage.setItem("Location", locationString);
-    console.log("Location saved", locationString);
   } catch (error) {
     console.error("Geolocation permission denied or unavailable:", error);
     Notify.create({
@@ -215,7 +223,6 @@ const getLocation = async () => {
 };
 
 const phoneMask = computed(() => {
-
   switch (selectedCountry.value?.value) {
     case "KE": // Kenya
       return "+254 (###) ###-###";
@@ -269,7 +276,6 @@ const register = async () => {
     });
 
     if (res.data.success) {
-      console.log("Registration Successful");
       router.push("/login");
     } else {
       error.value = res.data.message || "Error registering";
@@ -312,6 +318,6 @@ onMounted(getLocation);
   display: flex;
 }
 .phone-number-input-container:focus-within {
-  border:2px  solid $primary;
+  border: 2px solid $primary;
 }
 </style>

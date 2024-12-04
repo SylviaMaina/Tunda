@@ -39,7 +39,11 @@
 
     <div class="gallery-container">
       <div class="q-gutter-sm gallery-grid">
-        <q-card v-for="(item, index) in info" :key="index" class="my-card">
+        <q-card
+          v-for="(item, index) in userData.user?.photos"
+          :key="index"
+          class="my-card"
+        >
           <q-img
             :src="`${config.API_BASE_URL}/media/file/?file_path=${item.saved_file_name}`"
             alt="Image"
@@ -118,21 +122,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import {
-  Loading,
-  QBanner,
-  QIcon,
-  QFile,
-  QDialog,
-  QBtn,
-  QCard,
-  Notify,
-} from "quasar";
-import { apiClient } from "app/Storage/api";
+import { Loading, Notify } from "quasar";
 import { useUserStore } from "src/stores/useUserStore";
 import AuthSession from "app/Storage/AuthSession";
-import axios from "axios";
-import config from "src/config";
+import { config } from "src/boot/http";
 
 const router = useRouter();
 const files = ref([]);
@@ -141,20 +134,6 @@ const error = ref(null);
 const info = ref([]);
 const showUploadDialog = ref(false);
 
-const fetchInterests = async () => {
-  try {
-    const response = await apiClient.get("/media/");
-    if (response.data.success) {
-      info.value = response.data.results.docs;
-      console.log(response.data.results);
-    }
-  } catch (err) {
-    console.error("Error fetching data:", err);
-    error.value = "Failed to load gallery items. Please try again.";
-  }
-};
-
-onMounted(fetchInterests);
 onMounted(() => {
   userData.fetchUserData();
 });
@@ -185,30 +164,28 @@ async function uploadFiles() {
   try {
     const token = AuthSession.getToken();
 
-    const res = await axios.patch(
-      `${config.API_BASE_URL}/profile/photos/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: ` ${token}`,
-        },
-      }
-    );
-    if (response.data.success) {
+    const res = await fetch(`${config.API_BASE_URL}/profile/photos/`, {
+      method: "PATCH",
+      headers: {
+        Authorization: ` ${token}`,
+      },
+      body: formData,
+    });
+    if (res.ok) {
       Loading.hide();
+      router.push({ path: "/editimages" });
       Notify.create({
         type: "positive",
-        message: "Photo deleted successfully",
+        message: "Photo uploaded successfully",
       });
       info.value.splice(index, 1);
     }
   } catch (error) {
     Loading.hide();
-    console.error("Error deleting image:", error);
+    console.error("Error uploading image:", error);
     Notify.create({
       type: "negative",
-      message: "Unable to delete image.",
+      message: "Unable to upload image.",
     });
   }
 }
@@ -237,7 +214,6 @@ const dismissError = () => {
 
 .gallery-container {
   height: 40rem;
-  margin: 0 auto;
   overflow-y: auto;
 }
 

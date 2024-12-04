@@ -136,8 +136,6 @@ const loadNotifs = async () => {
 
     notifs.value = results.docs;
 
-    console.log(notifs.value);
-
     currentThread.value = notifs.value[0];
   } catch (error) {
     console.error("Error loading messages:", error);

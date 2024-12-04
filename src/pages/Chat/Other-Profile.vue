@@ -1,56 +1,66 @@
 <template>
-  <div class="q-ma-sm q-pa-sm" style="width: 95%; margin: 0 auto">
+  <div class="q-ma-sm q-pa-sm" style="width: 100%; margin: 0 auto">
     <div
       style="
         width: 100%;
         height: 8rem;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: space-between;
       "
-      v-if="user"
+      v-if="info"
     >
       <div style="width: 100%; height: 5rem">
-        <div class="row flex-center justify-between">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 2.5rem;
+            width: 100%;
+          "
+        >
           <h6
             class="text-black q-ma-sm"
             style="font-size: 18px; font-weight: 600"
           >
-            {{ user?.full_name }}, {{ calculateAge(user.dob) }}
+            {{ info?.full_name }}, {{ calculateAge(info.dob) }}
           </h6>
-          <router-link to="/home" style="text-decoration: none">
-            <div
-              style="
-                width: 2rem;
-                height: 2rem;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin: 0 auto;
-                border-radius: 100%;
-              "
-            >
-              <q-icon color="black" name="close" size="20px" />
-            </div>
-          </router-link>
+
+          <div
+            @click="
+              () => {
+                router.push({ path: '/start', query: { id: info.id } });
+              }
+            "
+            style="
+              width: 2rem;
+              height: 2rem;
+              display: flex;
+              align-items: center;
+              border-radius: 100%;
+            "
+          >
+            <q-icon color="black" name="close" size="20px" />
+          </div>
         </div>
 
         <div
           class="q-gutter-sm q-mb-sm q-ml-xs"
           style="
-            width: 90%;
+            width: 100%;
             display: grid;
             gap: 1rem;
             grid-template-columns: repeat(3, 6.8rem);
           "
         >
-          <div v-for="category in user.interests" :key="category.name">
+          <div v-for="category in info.interests" :key="category.name">
             <div
               v-for="interest in category.interests.slice(0, 1)"
               :key="interest.label"
             >
               <q-badge
                 transparent
-                style="color: black; background-color: rgba(0, 0, 0, 0.16)"
+                color="info"
                 class="q-pa-sm ellipsis-2-lines"
                 :label="interest.label"
               />
@@ -62,15 +72,15 @@
     <div class="q-my-lg">
       <h6 class="q-ma-sm text-dark text-subtitle1">Bio</h6>
       <h6 class="q-ma-sm text-subtitle2">
-        {{ user?.bio }}
+        {{ info?.bio }}
       </h6>
     </div>
-    <div class="q-pa-sm overflow-auto" v-if="user">
+    <div class="q-pa-sm overflow-auto" v-if="info">
       <div
         style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem"
       >
         <q-card
-          v-for="(match, index) in user.photos"
+          v-for="(match, index) in info.photos"
           :key="index"
           style="
             object-fit: cover;
@@ -94,76 +104,48 @@
         justify-content: center;
         width: 80%;
         left: 2rem;
-        bottom: 2rem;
+        bottom: 8rem;
         position: absolute;
       "
     >
       <q-fab
-        icon="close"
-        color="white"
-        text-color="black"
-        padding="8px"
-        class="q-mx-sm"
-        @click="showNotif"
-      >
-      </q-fab>
-      <q-fab
-        size="25px"
-        icon="favorite"
+        icon="message"
         color="primary"
+        text-color="white"
+        round
+        size="20px"
         class="q-mx-sm"
-        @click="showLike"
-      ></q-fab>
-      <q-fab icon="grade" color="info" text-color="secondary" padding="8px">
+        @click="
+          () => {
+            router.push({ path: '/threads/view', query: { id: info.id } });
+          }
+        "
+      >
       </q-fab>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
 import { apiClient } from "app/Storage/api";
 import { config } from "src/boot/http";
-
-const $q = useQuasar();
-
-const showNotif = () => {
-  $q.notify({
-    icon: "heart_broken",
-    iconSize: "18rem",
-    textColor: "red",
-    color: "transparent",
-    position: "center",
-    timeout: 1000,
-  });
-};
-
-const showLike = () => {
-  $q.notify({
-    icon: "favorite",
-    iconSize: "18rem",
-    textColor: "red",
-    color: "transparent",
-    position: "center",
-    timeout: 2500,
-    classes: "pulsate-icon",
-  });
-};
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
-const user = ref(null);
+const info = ref(null);
+const error = ref(null);
+const router = useRouter();
 const userId = route.query.id;
 
 // Function to fetch matches
 const getMatch = async () => {
   try {
-    const response = await apiClient.get(`matches/profile/?user_id=${userId}`);
+    const response = await apiClient.get(`/matches/profile/?user_id=${userId}`);
 
     const users = response.data.results;
 
-    user.value = users;
+    info.value = users;
   } catch (error) {
     console.error("Error fetching user details:", error);
   }
@@ -181,4 +163,34 @@ function calculateAge(dob) {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.q-field__control) {
+  padding: 0;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+:deep(.q-badge) {
+  background-color: white !important;
+  font-size: 0.9rem;
+  color: black;
+}
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pulsate-icon {
+  animation: pulsate 1s infinite;
+}
+</style>

@@ -108,7 +108,7 @@ import AuthSession from "../../../Storage/AuthSession";
 import { useUserStore } from "src/stores/useUserStore";
 import { Geolocation } from "@capacitor/geolocation";
 import axios from "axios";
-import config from "src/config";
+import { config } from "src/boot/http";
 
 const email = ref("");
 const password = ref("");
