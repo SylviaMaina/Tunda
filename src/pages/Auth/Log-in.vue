@@ -122,7 +122,6 @@ const getLocation = async () => {
     const { latitude, longitude } = position.coords;
     const locationString = `[${latitude}, ${longitude}]`;
     localStorage.setItem("Location", locationString);
-    console.log("Location saved", locationString);
   } catch (error) {
     console.error("Geolocation permission denied or unavailable:", error);
     Notify.create({

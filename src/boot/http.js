@@ -8,8 +8,6 @@ const config = {
   // Add other configurations as needed
 };
 
-export default boot(async () => {
-  console.log("Configuration loaded:", config);
-});
+export default boot(async () => {});
 
 export { config }; // Named export for reuse elsewhere

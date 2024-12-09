@@ -126,8 +126,7 @@ const fetchInterests = async () => {
 
 onMounted(fetchInterests);
 
-// Submit interests to the backend
-const selectedInterests = ref({}); // Tracks selections per category
+const selectedInterests = ref({});
 
 const isSelected = (category, value) => {
   return selectedInterests.value[category]?.includes(value);
@@ -145,7 +144,6 @@ const toggleSelection = (category, value) => {
   }
 };
 
-// Prepare payload for submission
 const submitInterests = async () => {
   Loading.show();
   try {

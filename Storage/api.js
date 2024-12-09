@@ -4,8 +4,11 @@ import { useRouter } from "vue-router";
 
 class ApiClient {
   constructor() {
-    this.router = useRouter();
     this.baseURL = config.API_BASE_URL;
+  }
+
+  get router() {
+    return useRouter();
   }
 
   async request(method, url, data = {}, conf = {}) {

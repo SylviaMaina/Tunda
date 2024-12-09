@@ -50,7 +50,7 @@
 
       <div style="height: 80%" class="full-width">
         <q-btn-toggle
-          v-for="option in options"
+          v-for="option in info"
           :key="option.value"
           v-model="model"
           class="q-my-lg"
@@ -79,8 +79,8 @@
             >
               <q-icon
                 right
-                name="eva-heart-outline"
-                size="2.5rem"
+                :name="option.icon"
+                size="2rem"
                 color="white"
                 class="q-pa-sm bg-primary"
                 style="border-radius: 2rem"
@@ -119,7 +119,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Loading } from "quasar";
 import { useRouter } from "vue-router";
 import { apiClient } from "app/Storage/api";
@@ -127,17 +127,31 @@ import { apiClient } from "app/Storage/api";
 const model = ref("");
 const router = useRouter();
 const error = ref(null);
+const info = ref([]);
 
-const options = [
-  { label: "Love", value: "love", subtitle: "I am not here to play" },
-  { label: "Fun", value: "fun", subtitle: "I am here for fun" },
-  { label: "Friends", value: "friends", subtitle: "I am here for friendship" },
-];
+const getSelection = async () => {
+  try {
+    const response = await apiClient.get(
+      "/profile/selections/?type=looking-for"
+    );
+    if (response.data.success) {
+      info.value = response.data.results;
+    } else {
+      error.value = response.data.message || "Error updating interests";
+    }
+  } catch (err) {
+    error.value =
+      err.response?.data?.message?.en ||
+      "Something went wrong, please try again or reach out to customer support";
+    console.error("Update failed:", err);
+    Loading.hide();
+  }
+};
 
 const Looking = async () => {
   Loading.show();
   try {
-    const selectedOption = options.find(
+    const selectedOption = info.value.find(
       (option) => option.value === model.value
     );
 
@@ -171,6 +185,8 @@ const dismissError = () => {
   error.value = null;
   Loading.hide();
 };
+
+onMounted(getSelection);
 </script>
 
 <style lang="scss" scoped>
