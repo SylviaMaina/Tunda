@@ -118,7 +118,6 @@ const props = defineProps({
   },
 });
 
-// Utility function to format the updated_at timestamp
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   if (isToday(date)) {

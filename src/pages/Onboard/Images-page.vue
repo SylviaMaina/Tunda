@@ -126,7 +126,6 @@ async function uploadFiles() {
     error.value = err.response?.data?.message || "Error uploading files";
   }
 }
-console.log(files.value);
 </script>
 
 <style lang="scss" scoped>

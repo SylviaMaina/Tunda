@@ -620,7 +620,6 @@ const updateFilters = () => {
 // Retrieve filters from localStorage if they exist
 const retrieveFilters = () => {
   const savedFilters = JSON.parse(localStorage.getItem("filters"));
-  console.log(savedFilters);
   if (savedFilters) {
     distance.value = savedFilters.distance || 0;
     age.value = savedFilters.age || { min: 18, max: 100 };
@@ -703,7 +702,7 @@ const showNotif = async () => {
         textColor: "red",
         color: "transparent",
         position: "center",
-        timeout: 1000,
+        timeout: 500,
       });
     } else {
       error.value = res.data.message || "Error registering";
@@ -731,7 +730,7 @@ const showLike = async () => {
         textColor: "red",
         color: "transparent",
         position: "center",
-        timeout: 2500,
+        timeout: 500,
         classes: "pulsate-icon",
       });
     } else {

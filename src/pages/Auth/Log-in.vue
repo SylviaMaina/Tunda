@@ -141,7 +141,6 @@ const HandleLogin = async () => {
     if (res.data.success) {
       Loading.hide();
       AuthSession.saveSession(res.data);
-      console.log("Log in success");
     } else {
       error.value = res.data.message || "Error registering";
     }

@@ -101,10 +101,8 @@ const remove = async (index) => {
   }
 
   try {
-    console.log("Deleting photo:", fileName);
     const token = AuthSession.getToken();
 
-    // Use the fetch API
     const response = await fetch(`${config.API_BASE_URL}/profile/photos/`, {
       method: "DELETE",
       headers: {

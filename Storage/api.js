@@ -25,9 +25,9 @@ class ApiClient {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "Referrer-Policy": "strict-origin-when-cross-origin", // Add Referrer Policy
+        "Referrer-Policy": "strict-origin-when-cross-origin",
         "Access-Control-Allow-Methods":
-          "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD", // Add Access-Control-Allow-Methods
+          "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD",
         ...conf.headers,
       },
       params: params,
