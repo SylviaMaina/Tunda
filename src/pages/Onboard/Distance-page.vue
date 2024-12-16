@@ -88,7 +88,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const model = ref(0);
+const model = ref(50);
 const error = ref(null);
 
 const Distance = async () => {

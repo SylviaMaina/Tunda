@@ -61,7 +61,9 @@
         >
           Location
         </h6>
-        <h6 class="no-margin text-dark text-subtitle2">Nairobi,Kenya</h6>
+        <h6 class="no-margin text-dark text-subtitle2">
+          {{ city }}, <span>{{ country }}</span>
+        </h6>
       </div>
     </div>
     <router-link to="/notifications">
@@ -392,31 +394,65 @@
       <q-card
         style="
           width: 90%;
-          height: 45rem;
+          height: 80%;
           margin: 0 auto;
           display: flex;
-          padding: 10px;
           flex-direction: column;
           justify-content: space-between;
+          border: 1px solid blue;
         "
         class="q-px-sm"
       >
-        <div
-          style="
-            height: 60%;
-            width: 90%;
-            padding-top: 1rem;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            justify-content: space-between;
-          "
-        >
-          <div style="width: 100%; margin: 0 auto">
-            <h6 class="no-margin no-padding text-weight-bold text-left">
-              Filter
+        <div style="height: 60%">
+          <div
+            style="
+              width: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <div>
+              <h6 class="no-margin no-padding text-weight-bold">Filter</h6>
+            </div>
+          </div>
+          <!-- Display Selected Filters -->
+          <div>
+            <h6 class="text-weight-bold text-dark q-my-sm">
+              Selected Filters:
             </h6>
+            <div class="q-gutter-sm row">
+              <q-badge v-if="location" color="primary" class="q-pa-sm">{{
+                location
+              }}</q-badge>
+              <q-badge v-if="distance" color="teal" class="q-pa-sm"
+                >Distance: {{ distance }} Km</q-badge
+              >
+              <q-badge
+                v-if="age.min !== 18 || age.max !== 100"
+                color="purple"
+                class="q-pa-sm"
+                >Age: {{ age.min }} - {{ age.max }}</q-badge
+              >
+              <q-badge v-if="gender" color="pink" class="q-pa-sm"
+                >Gender: {{ gender }}</q-badge
+              >
+              <q-badge
+                v-if="
+                  !location &&
+                  !distance &&
+                  age.min === 18 &&
+                  age.max === 100 &&
+                  !gender
+                "
+                color="grey"
+                class="q-pa-sm"
+                >No filters applied</q-badge
+              >
+            </div>
+          </div>
+          <!-- Location Filter -->
+          <div>
             <h6 class="text-dark text-subtitle1 q-py-sm">Location</h6>
             <q-input
               style="width: 100%"
@@ -430,36 +466,41 @@
               </template>
             </q-input>
           </div>
-          <div style="width: 100%; margin: 0 auto">
-            <q-badge color="black"> Distance (Km) </q-badge>
-
+          <!-- Distance Filter -->
+          <div
+            style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem"
+          >
+            <q-badge color="black">Distance (Km)</q-badge>
             <q-slider
               v-model="distance"
               :step="4"
               label
-              :label-value="distance + ' ' + 'Km'"
+              :label-value="distance + ' Km'"
               label-always
               switch-label-side
               color="primary"
               class="q-py-sm"
             />
           </div>
-          <div style="width: 100%; margin: 0 auto">
-            <q-badge color="black"> Age </q-badge>
-
+          <!-- Age Filter -->
+          <div
+            style="height: 6rem; width: 90%; margin: 0 auto; margin-top: 2rem"
+          >
+            <q-badge color="black">Age</q-badge>
             <q-range
               v-model="age"
-              :min="0"
+              :min="18"
               :max="100"
               label
-              :label-value="age + ' ' + 'years'"
+              :label-value="age.min + ' - ' + age.max + ' years'"
               label-always
               switch-label-side
               color="primary"
               class="q-py-sm"
             />
           </div>
-          <div style="width: 100%; margin: 0 auto">
+          <!-- Gender Filter -->
+          <div>
             <h6 class="text-weight-bold text-subtitle1 q-py-sm">
               Interested In
             </h6>
@@ -480,12 +521,9 @@
                 :options="[{ slot: 'one', value: 'female' }]"
               >
                 <template v-slot:one>
-                  <q-icon
-                    size="26px"
-                    name="female"
-                    color="primary"
-                  /> </template
-              ></q-btn-toggle>
+                  <q-icon size="26px" name="female" color="primary" />
+                </template>
+              </q-btn-toggle>
               <q-btn-toggle
                 v-model="gender"
                 no-caps
@@ -502,8 +540,9 @@
                 :options="[{ slot: 'two', value: 'male' }]"
               >
                 <template v-slot:two>
-                  <q-icon size="26px" name="male" color="primary" /> </template
-              ></q-btn-toggle>
+                  <q-icon size="26px" name="male" color="primary" />
+                </template>
+              </q-btn-toggle>
               <q-btn-toggle
                 v-model="gender"
                 no-caps
@@ -524,12 +563,13 @@
                     size="26px"
                     name="o_radio_button_unchecked"
                     color="primary"
-                  /> </template
-              ></q-btn-toggle>
+                  />
+                </template>
+              </q-btn-toggle>
             </div>
           </div>
         </div>
-
+        <!-- Actions -->
         <div
           style="display: flex; justify-content: space-between; width: 100%"
           class="q-my-lg"
@@ -551,8 +591,9 @@
             no-caps
             @click="applyFilters"
             style="width: 40%; height: 2.5rem"
-          /></div
-      ></q-card>
+          />
+        </div>
+      </q-card>
     </q-dialog>
   </div>
 </template>
@@ -563,18 +604,55 @@ import { Loading, useQuasar } from "quasar";
 import { apiClient } from "app/Storage/api";
 import AuthSession from "app/Storage/AuthSession";
 import { config } from "src/boot/http";
+import axios from "axios";
 
 const filter = ref(false);
-const distance = ref(0);
+const distance = ref(50);
 const age = ref({ min: 18, max: 100 });
 const gender = ref(null);
 const $q = useQuasar();
 const location = ref(null);
+const city = ref(null);
+const country = ref(null);
 const currentIndex = ref(0);
 const touchStart = ref(0);
 const touchEnd = ref(0);
 const error = ref(null);
 const info = ref([]);
+
+// Method to fetch reverse geocoding details
+const fetchCityAndCountry = async () => {
+  const storedLocation = JSON.parse(localStorage.getItem("Location"));
+  if (!storedLocation) {
+    console.error("No location found in localStorage");
+    return { city: "Unknown", country: "Unknown" };
+  }
+
+  const [latitude, longitude] = storedLocation;
+  const accessToken = config.MAPBOX_TOKEN;
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${accessToken}`;
+
+  try {
+    const response = await axios.get(url);
+    if (response.data && response.data.features.length > 0) {
+      const features = response.data.features;
+      const placeContext = features.find((f) => f.place_type.includes("place"));
+      const countryContext = features.find((f) =>
+        f.place_type.includes("country")
+      );
+
+      city.value = placeContext?.text || "Unknown City";
+      country.value = countryContext?.text || "Unknown Country";
+      return { city, country };
+    } else {
+      console.error("No results found for the given coordinates.");
+      return { city: "Unknown", country: "Unknown" };
+    }
+  } catch (error) {
+    console.error("Error fetching reverse geocoding data from Mapbox:", error);
+    return { city: "Error", country: "Error" };
+  }
+};
 
 defineProps({
   user: {
@@ -748,6 +826,7 @@ const showLike = async () => {
 onMounted(async () => {
   await getMatch();
   retrieveFilters();
+  await fetchCityAndCountry();
 });
 
 function calculateAge(dob) {

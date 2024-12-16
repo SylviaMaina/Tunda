@@ -16,7 +16,9 @@
           <div v-for="category in userData.user.interests" :key="category.name">
             <div class="q-gutter-md q-mb-md">
               <q-btn-toggle
-                v-for="interest in category.interests.slice(0, 3)"
+                v-for="interest in category.interests.filter(
+                  (item) => item.selected
+                )"
                 :key="interest.value"
                 v-model="interest.selected"
                 no-caps
@@ -36,7 +38,11 @@
         </div>
       </div>
       <h6 style="font-size: 18px; font-weight: 600">Select other interests</h6>
-      <div class="q-my-sm" v-for="item in interest" :key="item.name">
+      <div
+        class="q-my-sm"
+        v-for="item in userData.user.interests"
+        :key="item.name"
+      >
         <div>
           <h6 class="q-py-sm" style="font-size: 18px; font-weight: 600">
             {{ item.name }}
@@ -108,27 +114,9 @@ const interest = ref([]);
 const error = ref(null);
 const $q = useQuasar();
 
-const fetchInterests = async () => {
-  try {
-    const response = await apiClient.get("/profile/selections/?type=interests");
-    if (response.data.success) {
-      interest.value = response.data.results.map((item) => ({
-        ...item,
-        interests: item.interests.map((content) => ({
-          ...content,
-          selected: content.selected || false,
-        })),
-      }));
-    }
-  } catch (error) {
-    console.error("Error fetching interests:", error);
-  }
-};
-
-onMounted(fetchInterests);
-
-onMounted(() => {
-  userData.fetchUserData();
+onMounted(async () => {
+  await userData.fetchUserData();
+  interest.value = userData.user.interests;
 });
 
 const discardChanges = () => {
@@ -178,7 +166,6 @@ const updateInterests = async () => {
         position: "top",
         timeout: 2000,
       });
-      fetchInterests();
     } else {
       error.value = res.data.message || "Error updating interests";
     }

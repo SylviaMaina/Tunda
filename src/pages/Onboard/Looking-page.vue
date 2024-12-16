@@ -61,9 +61,9 @@
             align-items: center;
             justify-content: space-between;
           "
-          toggle-text-color="black"
+          toggle-text-color="white"
           no-caps
-          toggle-color="accent"
+          toggle-color="primary"
           :options="[{ value: option.value, slot: option.value }]"
         >
           <template v-slot:[option.value]>
@@ -80,7 +80,7 @@
               <q-icon
                 right
                 :name="option.icon"
-                size="2rem"
+                size="1.5rem"
                 color="white"
                 class="q-pa-sm bg-primary"
                 style="border-radius: 2rem"

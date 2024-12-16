@@ -49,13 +49,19 @@
           placeholder="Please enter"
         />
 
-        <q-input outlined type="email" label="Email" v-model="email" />
+        <q-input
+          outlined
+          type="email"
+          label="Email"
+          v-model="email"
+          :error="!email.includes('@') && email.length > 0"
+          error-message="Please enter a valid email address."
+        />
         <!-- Country Dropdown -->
         <div class="phone-number-input-container">
           <q-select
             borderless
             dense
-            class=""
             v-model="selectedCountry"
             :options="countryOptions"
             @update:model-value="onCountryChange"
@@ -98,6 +104,7 @@
             :mask="phoneMask"
             class="q-pa-none"
             placeholder="Enter phone number"
+            :disable="!selectedCountry"
           >
           </q-input>
         </div>
@@ -176,7 +183,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { Geolocation } from "@capacitor/geolocation";
@@ -204,7 +211,7 @@ const countryOptions = [
   { label: "South Sudan", value: "SS" },
   { label: "United States", value: "US" },
 ];
-const selectedCountry = ref({ label: "Kenya", value: "KE" });
+const selectedCountry = ref(null);
 const error = ref(null);
 
 const getLocation = async () => {
@@ -242,15 +249,21 @@ const phoneMask = computed(() => {
 });
 
 const onCountryChange = (countryCode) => {
-  phone_number.value = "";
-  const phoneNumber = parsePhoneNumberFromString(
-    phone_number.value,
-    countryCode
-  );
-  if (phoneNumber) {
-    phone_number.value = phoneNumber.formatInternational();
+  if (phone_number.value) {
+    const phoneNumber = parsePhoneNumberFromString(
+      phone_number.value,
+      countryCode
+    );
+    if (phoneNumber) {
+      phone_number.value = phoneNumber.formatInternational();
+    }
   }
 };
+
+watch(selectedCountry, () => {
+  phone_number.value = "";
+});
+
 const isValid = computed(() => password.value?.length >= 8);
 const matches = computed(() => password.value === confirm_password.value);
 
@@ -264,10 +277,19 @@ const maxDob = computed(() => {
 const register = async () => {
   const formattedDob = new Date(dob.value).toISOString().split("T")[0];
 
+  const phoneNumber = parsePhoneNumberFromString(
+    phone_number.value,
+    selectedCountry.value.value
+  );
+  if (!phoneNumber || !phoneNumber.isValid()) {
+    error.value = "Invalid phone number format for selected country.";
+    return;
+  }
+
   try {
     const res = await axios.post(`${config.API_BASE_URL}/users/register/`, {
       email: email.value,
-      phone_number: phone_number.value,
+      phone_number: phoneNumber.number,
       full_name: full_name.value,
       gender: gender.value,
       dob: formattedDob,
